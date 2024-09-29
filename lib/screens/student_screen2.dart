@@ -9,15 +9,14 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  int selectedDay = DateTime.now().weekday %
-      7; // Get current day of the week (0 = Sunday, 6 = Saturday)
+  int selectedDay = DateTime.now().weekday % 7; 
+  // Get current day of the week (0 = Sunday, 6 = Saturday)
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
-    _scrollController
-        .dispose(); // Dispose the controller when the widget is removed
+    _scrollController.dispose(); // Dispose the controller when the widget is removed
     super.dispose();
   }
 
