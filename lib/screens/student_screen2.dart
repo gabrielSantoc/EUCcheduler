@@ -73,7 +73,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 3),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: days.asMap().entries.map((entry) {
@@ -143,30 +143,29 @@ class ScheduleList extends StatefulWidget {
 
 class _ScheduleListState extends State<ScheduleList> {
   final SupabaseClient supabase = Supabase.instance.client;
-  List<Map<String, dynamic>> users = [];
+  List<SchedModel> allSched = [];
 
   fetchSched() async {
     try {
-      List<SchedModel> allSched = [];
+      
       final response = await Supabase.instance.client
           .from('tbl_schedule')
           .select()
           .eq('section', 'BSHM-2B');
-      print(response);
       for (var sched_items in response) {
         var user = SchedModel(
           schedId: sched_items['schedule_id'],
           profName: sched_items['professor_name'],
           subject: sched_items['subject'],
-          startTime: sched_items['start_time'],
-          endTime: sched_items['end_time'],
+          rawStartTime: sched_items['start_time'],
+          rawEndTime: sched_items['end_time'],
           dayOfWeek: sched_items['day_of_week'],
         );
         allSched.add(user);
       }
-      for (var sched in allSched) {
-        print(sched.subject);
-      }
+      // for (var sched in allSched) {
+      //   print(sched.subject);
+      // }
     } catch (e) {
       print('Error fetching users: $e');
     }
@@ -175,121 +174,15 @@ class _ScheduleListState extends State<ScheduleList> {
   @override
   Widget build(BuildContext context) {
     fetchSched();
-    // List of schedules with 'start_time' and 'end_time
-    List<Map<String, dynamic>> schedules = [
-      {
-        'start_time': '02:00',
-        'end_time': '02:30',
-        'course': 'Mathematics',
-        'topic': 'Chapter 1: Introduction',
-        'instructor': 'Clark Kent',
-        'day_of_week': 0 // Sunday
-      },
-      {
-        'start_time': '10:00',
-        'end_time': '11:00',
-        'course': 'Science',
-        'topic': 'Chapter 2: Physics',
-        'instructor': 'Bruce Wayne',
-        'day_of_week': 3 // Wednesday
-      },
-      {
-        'start_time': '11:35',
-        'end_time': '12:30',
-        'course': 'History',
-        'topic': 'Ancient Civilizations',
-        'instructor': 'Diana Prince',
-        'day_of_week': 3 // Wednesday
-      },
-      {
-        'start_time': '12:00',
-        'end_time': '13:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '13:00',
-        'end_time': '14:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '14:00',
-        'end_time': '15:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-      {
-        'start_time': '15:00',
-        'end_time': '16:00',
-        'course': 'Math',
-        'topic': 'Algebra',
-        'instructor': 'Albert Einstein',
-        'day_of_week': 5 // Monday
-      },
-    ];
+
     // Filter schedules based on the selected day
-    List<Map<String, dynamic>> filteredSchedules = schedules
-        .where((schedule) => schedule['day_of_week'] == widget.selectedDay)
+    List<SchedModel> filteredSchedules = allSched
+        .where((schedule) => schedule.dayIndex == widget.selectedDay)
         .toList();
 
     // Find the index of the first highlighted schedule (if any)
     int highlightedIndex = filteredSchedules.indexWhere((schedule) {
-      return checkIfCurrentTime(schedule['start_time']!, schedule['end_time']!);
+      return checkIfCurrentTime(schedule.startTime!, schedule.endTime!);
     });
 
     // Scroll to the highlighted schedule after build
@@ -309,10 +202,10 @@ class _ScheduleListState extends State<ScheduleList> {
       itemBuilder: (context, index) {
         var schedule = filteredSchedules[index];
         bool isCurrentTime =
-            checkIfCurrentTime(schedule['start_time']!, schedule['end_time']!);
+            checkIfCurrentTime(schedule.startTime!, schedule.endTime!);
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -322,16 +215,16 @@ class _ScheduleListState extends State<ScheduleList> {
                 child: Column(
                   children: [
                     Text(
-                      schedule['start_time']!,
+                      schedule.startTime!,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      schedule['end_time']!,
+                      schedule.endTime!,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 126, 126, 126),
                       ),
@@ -354,7 +247,7 @@ class _ScheduleListState extends State<ScheduleList> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        schedule['course']!,
+                        schedule.subject!,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -363,19 +256,19 @@ class _ScheduleListState extends State<ScheduleList> {
                               : const Color.fromARGB(255, 3, 3, 3),
                         ),
                       ),
+                      // const SizedBox(height: 5),
+                      // Text(
+                      //   schedule['topic']!,
+                      //   style: TextStyle(
+                      //     fontSize: 12,
+                      //     color: isCurrentTime
+                      //         ? const Color.fromARGB(255, 255, 255, 255)
+                      //         : const Color.fromARGB(255, 3, 3, 3),
+                      //   ),
+                      // ),
                       const SizedBox(height: 5),
                       Text(
-                        schedule['topic']!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isCurrentTime
-                              ? const Color.fromARGB(255, 255, 255, 255)
-                              : const Color.fromARGB(255, 3, 3, 3),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        schedule['instructor']!,
+                        schedule.profName!,
                         style: TextStyle(
                           fontSize: 12,
                           color: isCurrentTime
@@ -393,34 +286,44 @@ class _ScheduleListState extends State<ScheduleList> {
       },
     );
   }
+bool checkIfCurrentTime(String startTime, String endTime) {
+  // Get today's date
+  DateTime now = DateTime.now();
 
-  bool checkIfCurrentTime(String startTime, String endTime) {
-    // Get today's date
-    DateTime now = DateTime.now();
+  // Parse the start_time and end_time string
+  final scheduleStartTime = _parseTimeString(startTime, now);
+  final scheduleEndTime = _parseTimeString(endTime, now);
 
-    // Parse the start_time and end_time string into DateTime objects for today
-    final scheduleStartTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      int.parse(startTime.split(":")[0]), // hour
-      int.parse(startTime.split(":")[1]), // minute
-    );
+  // Define a time range (1 minute before the start_time and up to the end_time)
+  final lowerBound = scheduleStartTime.subtract(Duration(minutes: 1));
+  final upperBound = scheduleEndTime;
 
-    final scheduleEndTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      int.parse(endTime.split(":")[0]), // hour
-      int.parse(endTime.split(":")[1]), // minute
-    );
+  // Check if the current time falls within the range
+  return now.isAfter(lowerBound) && now.isBefore(upperBound);
+}
 
-    // Define a time range (15 minutes before the start_time and up to the end_time)
-    final lowerBound = scheduleStartTime.subtract(Duration(minutes: 1));
-    final upperBound = scheduleEndTime;
-    print('Now: $now, Lower Bound: $lowerBound, Upper Bound: $upperBound');
-
-    // Check if the current time falls within the range (15 minutes before start_time and before end_time)
-    return now.isAfter(lowerBound) && now.isBefore(upperBound);
+DateTime _parseTimeString(String timeString, DateTime currentDate) {
+  // Extract hours and minutes
+  List<String> parts = timeString.split(' ');
+  List<String> timeParts = parts[0].split(':');
+  int hours = int.parse(timeParts[0]);
+  int minutes = int.parse(timeParts[1]);
+  
+  // Adjust for PM
+  if (parts[1].toLowerCase() == 'pm' && hours != 12) {
+    hours += 12;
   }
+  // Adjust for AM 12:00
+  if (parts[1].toLowerCase() == 'am' && hours == 12) {
+    hours = 0;
+  }
+
+  return DateTime(
+    currentDate.year,
+    currentDate.month,
+    currentDate.day,
+    hours,
+    minutes,
+  );
+}
 }
