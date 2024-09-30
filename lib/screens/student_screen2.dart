@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:my_schedule/model/schedule_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -9,14 +11,15 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  int selectedDay = DateTime.now().weekday % 7; 
+  int selectedDay = DateTime.now().weekday % 7;
   // Get current day of the week (0 = Sunday, 6 = Saturday)
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Dispose the controller when the widget is removed
+    _scrollController
+        .dispose(); // Dispose the controller when the widget is removed
     super.dispose();
   }
 
@@ -128,15 +131,51 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 }
 
-class ScheduleList extends StatelessWidget {
+class ScheduleList extends StatefulWidget {
   final int selectedDay;
   final ScrollController scrollController;
 
   ScheduleList({required this.selectedDay, required this.scrollController});
 
   @override
+  State<ScheduleList> createState() => _ScheduleListState();
+}
+
+class _ScheduleListState extends State<ScheduleList> {
+  final SupabaseClient supabase = Supabase.instance.client;
+  List<Map<String, dynamic>> users = [];
+
+  fetchSched() async {
+    try {
+      List<SchedModel> allSched = [];
+      final response = await Supabase.instance.client
+          .from('tbl_schedule')
+          .select()
+          .eq('section', 'BSHM-2B');
+      print(response);
+      for (var sched_items in response) {
+        var user = SchedModel(
+          schedId: sched_items['schedule_id'],
+          profName: sched_items['professor_name'],
+          subject: sched_items['subject'],
+          startTime: sched_items['start_time'],
+          endTime: sched_items['end_time'],
+          dayOfWeek: sched_items['day_of_week'],
+        );
+        allSched.add(user);
+      }
+      for (var sched in allSched) {
+        print(sched.subject);
+      }
+    } catch (e) {
+      print('Error fetching users: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // List of schedules with 'start_time' and 'end_time'
+    fetchSched();
+    // List of schedules with 'start_time' and 'end_time
     List<Map<String, dynamic>> schedules = [
       {
         'start_time': '02:00',
@@ -243,10 +282,9 @@ class ScheduleList extends StatelessWidget {
         'day_of_week': 5 // Monday
       },
     ];
-
     // Filter schedules based on the selected day
     List<Map<String, dynamic>> filteredSchedules = schedules
-        .where((schedule) => schedule['day_of_week'] == selectedDay)
+        .where((schedule) => schedule['day_of_week'] == widget.selectedDay)
         .toList();
 
     // Find the index of the first highlighted schedule (if any)
@@ -257,7 +295,7 @@ class ScheduleList extends StatelessWidget {
     // Scroll to the highlighted schedule after build
     if (highlightedIndex != -1) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        scrollController.animateTo(
+        widget.scrollController.animateTo(
           highlightedIndex * 105.0, // Estimate height of the item
           duration: const Duration(seconds: 1),
           curve: Curves.easeInOut,
@@ -266,7 +304,7 @@ class ScheduleList extends StatelessWidget {
     }
 
     return ListView.builder(
-      controller: scrollController,
+      controller: widget.scrollController,
       itemCount: filteredSchedules.length,
       itemBuilder: (context, index) {
         var schedule = filteredSchedules[index];
