@@ -10,7 +10,7 @@ class SchedModel {
   late final String dayOfWeek;
   late final int dayIndex;
 
- SchedModel({
+  SchedModel({
     required this.schedId,
     required this.profName,
     required this.subject,
@@ -22,15 +22,33 @@ class SchedModel {
     this.endTime = _formatTime(rawEndTime);
     this.dayIndex = _mapDayToIndex(this.dayOfWeek);
   }
+
+  static List<SchedModel> jsonToList(List<dynamic> jsonList) {
+    List<SchedModel> schedules = [];
+    for (var json in jsonList) {
+      var schedule = SchedModel(
+        schedId: json['schedule_id'],
+        profName: json['professor_name'],
+        subject: json['subject'],
+        rawStartTime: json['start_time'],
+        rawEndTime: json['end_time'],
+        dayOfWeek: json['day_of_week'],
+      );
+      schedules.add(schedule);
+    }
+    return schedules;
+  }
+
   static String _formatTime(String time) {
     // Extract hours and minutes
     List<String> parts = time.split(':');
     String hours = parts[0].padLeft(2, '0');
     String minutes = parts[1].padLeft(2, '0');
-    
+
     // Create a DateTime object to use DateFormat
-    DateTime dateTime = DateTime(2022, 1, 1, int.parse(hours), int.parse(minutes));
-    
+    DateTime dateTime =
+        DateTime(2022, 1, 1, int.parse(hours), int.parse(minutes));
+
     // Format the time to 12-hour format
     return DateFormat("h:mm a").format(dateTime);
   }
