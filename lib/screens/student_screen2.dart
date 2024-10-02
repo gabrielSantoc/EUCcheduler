@@ -81,10 +81,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25)),
+                    topRight: Radius.circular(25)
+                ),
                 color: const Color.fromARGB(255, 255, 255, 255),
               ),
               child: Column(

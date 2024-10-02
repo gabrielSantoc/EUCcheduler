@@ -46,8 +46,7 @@ class SchedModel {
     String minutes = parts[1].padLeft(2, '0');
 
     // Create a DateTime object to use DateFormat
-    DateTime dateTime =
-        DateTime(2022, 1, 1, int.parse(hours), int.parse(minutes));
+    DateTime dateTime = DateTime(2022, 1, 1, int.parse(hours), int.parse(minutes));
 
     // Format the time to 12-hour format
     return DateFormat("h:mm a").format(dateTime);
@@ -65,4 +64,5 @@ class SchedModel {
     };
     return dayMap[day.toLowerCase()] ?? -1;
   }
+
 }

@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const Text(
               "I.D Number",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: GRAY
               ),
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const Text(
               "Password",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: GRAY
               ),
@@ -165,7 +165,39 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: false,
             ),
             
-            const SpacerClass(height: 40, width: 0),
+
+            const SpacerClass(height: 15, width: 0),
+
+            const Text(
+              "Your initial password is your birthdate\nin this format YYYY-MM-DD",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            const SpacerClass(height: 10, width: 0),
+
+            GestureDetector(
+              onTap: () {
+                // Navigator.push(
+                //   context, 
+                //   MaterialPageRoute(builder: (context) => const ForgotPasswordPage())
+                // );
+              },
+              child: const Text(
+                'Forgot Password ?',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: MAROON
+                ),
+                
+              ),
+            ),
+
+            const SpacerClass(height: 15, width: 0),
             
             MyButton(
               onTap: () async {
@@ -176,6 +208,39 @@ class _LoginScreenState extends State<LoginScreen> {
 
               },
               buttonName: "Login"
+            ),
+
+            const SpacerClass(height: 15, width: 0),
+
+            Column(
+              children: [
+        
+                const Text(
+                  "Don't have an account? ",
+                  style: TextStyle(
+                    fontSize: 12
+                  ),
+                ),
+        
+                const SizedBox(width: 30),
+        
+                GestureDetector(
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => const RegisterNew()) //signup
+                    // );
+                  },
+                  child: const Text(
+                    "Register",
+                    style: TextStyle(
+                      color: MAROON,
+                      fontWeight: FontWeight.bold,
+                   
+                    ),
+                  ),
+                ),
+              ],
             )
 
           ],
