@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
@@ -80,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               child: Column(
 
                 children: [
@@ -107,16 +108,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     children: [
 
-                      const Text("Already have an account? "),
+                      const Text("Don't have an account? "),
 
                       const SizedBox(width: 18),
 
                       GestureDetector(
                         onTap: () {
-                          
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RegisterScreen())
+                          );
                         },
                         child: const Text(
-                          "Log in",
+                          "Register",
                           style: TextStyle(
                             color: Color(0xFF9e0b0f),
                             fontWeight: FontWeight.bold,
