@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/register.dart';
+import 'package:my_schedule/main.dart';
+import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +19,13 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final studentNumberController = TextEditingController();
   final passwordController = TextEditingController();
+
+  void login() async {
+    final AuthResponse res = await supabase.auth.signInWithPassword(
+      email: studentNumberController.text.toString(),
+      password: passwordController.text.toString(),
+    );
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           "Register",
                           style: TextStyle(
-                            color: Color(0xFF9e0b0f),
+                            color: MAROON,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -135,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
         
                   MyButton(
                     onTap: () {
-                      
+                      login();
                     },
                     buttonName: "Login",
                   ),

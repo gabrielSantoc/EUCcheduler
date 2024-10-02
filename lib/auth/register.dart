@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/login.dart';
+import 'package:my_schedule/main.dart';
+import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,8 +17,52 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterNewState extends State<RegisterScreen> {
-  final studentNumberController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _studentNumberController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _sectionController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _confirmEmailController = TextEditingController();
+  
+  late final StreamSubscription<AuthState>  _authSubscription;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _authSubscription = supabase.auth.onAuthStateChange.listen((event) {
+      final session = event.session;
+
+      if(session != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StudentScreen())
+        );
+      }
+
+    });
+  }
+
+  void registerAccount () async{
+    
+    try{
+      
+      print("EMAIL ::: ${_emailController.text}");
+      print("PASSWORD ::: ${_birthDateController.text}");
+      await supabase.auth.signUp(
+        email: _emailController.text.trim(),
+        password: _birthDateController.text.trim(),
+      );
+      
+    }catch(e) {
+
+      print("ERROR ::: $e");
+
+    }
+
+    
+
+  }   
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +81,9 @@ class _RegisterNewState extends State<RegisterScreen> {
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,         
                 children: [
+
                   SizedBox(height: 50),
+
                   Text(
                     "Create Account",
                     style: TextStyle(
@@ -73,7 +124,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                 children: [
 
                   MyTextFormField(
-                    controller: studentNumberController,
+                    controller: _studentNumberController,
                     hintText: "Student Number",
                     obscureText: false,
                   ),
@@ -87,7 +138,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                       children: [
                         Expanded(
                           child: MyTextFormFieldForName(
-                            controller: passwordController,
+                            controller: _firstNameController,
                             hintText: "First Name",
                             obscureText: true,
                           ),
@@ -97,7 +148,7 @@ class _RegisterNewState extends State<RegisterScreen> {
 
                         Expanded(
                           child: MyTextFormFieldForName(
-                            controller: passwordController,
+                            controller: _lastNameController,
                             hintText: "Last Name",
                             obscureText: true,
                           ),
@@ -115,30 +166,30 @@ class _RegisterNewState extends State<RegisterScreen> {
 
 
                   MyTextFormField(
-                    controller: passwordController,
+                    controller: _sectionController,
                     hintText: "Section",
                     obscureText: true,
                   ),
                   const SizedBox(height: 20),
 
                   MyTextFormField(
-                    controller: passwordController,
+                    controller: _birthDateController,
                     hintText: "Birthdate",
-                    obscureText: true,
+                    obscureText: false,
                   ),
                   const SizedBox(height: 20),
                   
                   MyTextFormField(
-                    controller: passwordController,
+                    controller: _emailController,
                     hintText: "Email",
-                    obscureText: true,
+                    obscureText: false,
                   ),
                   const SizedBox(height: 20),
                   
                   MyTextFormField(
-                    controller: passwordController,
+                    controller: _confirmEmailController,
                     hintText: "Confirm Email",
-                    obscureText: true,
+                    obscureText: false,
                   ),
                   const SizedBox(height: 20),
 
@@ -158,7 +209,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                         child: const Text(
                           "Log in",
                           style: TextStyle(
-                            color: Color(0xFF9e0b0f),
+                            color: MAROON,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -170,7 +221,7 @@ class _RegisterNewState extends State<RegisterScreen> {
         
                   MyButton(
                     onTap: () {
-                      // Handle login logic
+                      registerAccount();
                     },
                     buttonName: "Login",
                   ),

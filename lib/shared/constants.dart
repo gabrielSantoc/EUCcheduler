@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 const MAROON = Color(0xFF862349);
 const WHITE = Color(0xFFFFFFFF);
 const LIGHTGRAY = Color(0xFFECECEC);
 const GRAY = Color(0xFF8F8E8E);
-
-final api_key = dotenv.env['API_KEY'];
-
 Widget vSpacerWidth(double width) {
 
   return SizedBox(
