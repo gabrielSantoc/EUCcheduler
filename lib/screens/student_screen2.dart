@@ -85,7 +85,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25),
                     topRight: Radius.circular(25)
-                ),
+                    ),
                 color: const Color.fromARGB(255, 255, 255, 255),
               ),
               child: Column(

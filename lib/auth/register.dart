@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
@@ -26,17 +27,14 @@ class _RegisterNewState extends State<RegisterScreen> {
             Container(
 
               color: MAROON,
-              height: MediaQuery.of(context).size.height * 0.5, 
-              
+              height: MediaQuery.of(context).size.height * 0.2, 
 
               child: const Column(
-
-                mainAxisAlignment: MainAxisAlignment.center,
-                
+                mainAxisAlignment: MainAxisAlignment.center,         
                 children: [
-        
+                  SizedBox(height: 50),
                   Text(
-                    "Welcome back!",
+                    "Create Account",
                     style: TextStyle(
                       fontSize: 45,
                       fontWeight: FontWeight.bold,
@@ -45,15 +43,6 @@ class _RegisterNewState extends State<RegisterScreen> {
                   ),
         
                   SizedBox(height: 10),
-                  
-                  Text(
-                    "Sign in to Continue!",
-                    style: TextStyle(
-                      fontSize: 20, // Reduced size for subtitle
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -61,7 +50,7 @@ class _RegisterNewState extends State<RegisterScreen> {
             // BOTTOM WHITE CONTAINER
             Container(
               
-              height: MediaQuery.of(context).size.height * 0.5, 
+              height: MediaQuery.of(context).size.height * 0.8, 
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               
               decoration: const BoxDecoration(
@@ -80,20 +69,80 @@ class _RegisterNewState extends State<RegisterScreen> {
                 ],
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+
                   MyTextFormField(
                     controller: studentNumberController,
                     hintText: "Student Number",
                     obscureText: false,
                   ),
+
                   const SizedBox(height: 20),
+
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: MyTextFormFieldForName(
+                            controller: passwordController,
+                            hintText: "First Name",
+                            obscureText: true,
+                          ),
+                        ),
+
+                        const SizedBox(width: 5),
+
+                        Expanded(
+                          child: MyTextFormFieldForName(
+                            controller: passwordController,
+                            hintText: "Last Name",
+                            obscureText: true,
+                          ),
+                        ),
+                    
+                    
+                      ],
+                    ),
+                  ),
+
+
+                  
+                  const SizedBox(height: 20),
+
+
+
                   MyTextFormField(
                     controller: passwordController,
-                    hintText: "Password",
+                    hintText: "Section",
                     obscureText: true,
                   ),
                   const SizedBox(height: 20),
+
+                  MyTextFormField(
+                    controller: passwordController,
+                    hintText: "Birthdate",
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  MyTextFormField(
+                    controller: passwordController,
+                    hintText: "Email",
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  MyTextFormField(
+                    controller: passwordController,
+                    hintText: "Confirm Email",
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20),
+
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -101,7 +150,10 @@ class _RegisterNewState extends State<RegisterScreen> {
                       const SizedBox(width: 18),
                       GestureDetector(
                         onTap: () {
-                          // Handle login navigation
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginScreen())
+                          );
                         },
                         child: const Text(
                           "Log in",
@@ -112,6 +164,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                         ),
                       ),
                     ],
+
                   ),
                   const SizedBox(height: 25),
         
