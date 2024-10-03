@@ -304,7 +304,7 @@ class _ScheduleListState extends State<ScheduleList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ViewPage()),
+                                    builder: (context) => ViewPage(startTime: schedule.startTime, endTime: schedule.endTime,profName: schedule.profName, subjectName: schedule.subject, schedId: schedule.schedId,)),
                               );
                             },
                             child: Ink(

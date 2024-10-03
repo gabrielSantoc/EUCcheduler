@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:my_schedule/model/announcement_model.dart';
 import 'package:my_schedule/shared/constants.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ViewPage extends StatefulWidget {
+  final String startTime;
+  final String endTime;
+  final String profName;
+  final String subjectName;
+  final int schedId;
+
+  ViewPage(
+      {required this.startTime,
+      required this.endTime,
+      required this.profName,
+      required this.subjectName,
+      required this.schedId,
+      super.key});
   @override
   ViewPageState createState() => ViewPageState();
 }
@@ -18,47 +34,50 @@ class ViewPageState extends State<ViewPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'Business Practicum',
+          Text(
+            widget.subjectName,
             style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: WHITE
-            ),
+                fontSize: 32, fontWeight: FontWeight.bold, color: WHITE),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(23),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Date',
-                      style: TextStyle(fontWeight: FontWeight.bold,color: WHITE),
-                    ),
                     SizedBox(height: 8),
                     Text(
                       'Time',
-                      style: TextStyle(fontWeight: FontWeight.bold,color: WHITE),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
                     SizedBox(height: 8),
                     Text(
                       'Teacher',
-                      style: TextStyle(fontWeight: FontWeight.bold,color: WHITE),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('Sept. 23, 2024',style: TextStyle(fontWeight: FontWeight.bold,color: WHITE),),
-                    SizedBox(height: 8),
-                    Text('11:35pm - 11:35 am',style: TextStyle(fontWeight: FontWeight.bold,color: WHITE),),
-                    SizedBox(height: 8),
-                    Text('Clark Kent',style: TextStyle(fontWeight: FontWeight.bold,color: WHITE),),
+                    const SizedBox(height: 8),
+                    Text(
+                      "${widget.startTime}-${widget.endTime}",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.profName,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                    ),
                   ],
                 ),
               ],
@@ -87,39 +106,7 @@ class ViewPageState extends State<ViewPage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ListView(
-                        children: const [
-                          AnnouncementCard(
-                            title: 'Title',
-                            content:
-                                'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                          ),
-                          SizedBox(height: 16),
-                          AnnouncementCard(
-                            title: 'Title',
-                            content:
-                                'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                          ),
-                          SizedBox(height: 16),
-                          AnnouncementCard(
-                            title: 'Title',
-                            content:
-                                'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                          ),
-                          SizedBox(height: 16),
-                          AnnouncementCard(
-                            title: 'Title',
-                            content:
-                                'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                          ),
-                          SizedBox(height: 16),
-                          AnnouncementCard(
-                            title: 'Title',
-                            content:
-                                'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                          ),
-                        ],
-                      ),
+                      child: AnnouncementCard(schedId: widget.schedId),
                     ),
                   ),
                 ],
@@ -132,46 +119,112 @@ class ViewPageState extends State<ViewPage> {
   }
 }
 
-class AnnouncementCard extends StatelessWidget {
-  final String title;
-  final String content;
+class AnnouncementCard extends StatefulWidget {
+  final int schedId;
 
-  const AnnouncementCard({
-    Key? key,
-    required this.title,
-    required this.content,
-  }) : super(key: key);
+  const AnnouncementCard({required this.schedId, super.key});
+
+  @override
+  State<AnnouncementCard> createState() => _AnnouncementCardState();
+}
+
+class _AnnouncementCardState extends State<AnnouncementCard> {
+  final SupabaseClient supabase = Supabase.instance.client;
+  late Future<List<AnnouncementModel>> announcementFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    announcementFuture = fetchAnnouncement();
+  }
+
+  Future<List<AnnouncementModel>> fetchAnnouncement() async {
+    try {
+      final response = await Supabase.instance.client
+          .from('tbl_announcement')
+          .select()
+          .eq('schedule_id', widget.schedId);
+
+      return AnnouncementModel.jsonToList(response);
+    } catch (e) {
+      print('Error fetching announcements: $e');
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: LIGHTGRAY,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            content,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
+    return FutureBuilder<List<AnnouncementModel>>(
+      future: announcementFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Column(
+            children: [
+              SizedBox(
+                height: 50,
+              ),
+              Center(
+                  child: LoadingAnimationWidget.staggeredDotsWave(
+                      color: MAROON, size: 50)),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Looking for announcements...",
+                style: TextStyle(color: GRAY, fontSize: 15),
+              )
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No announcements available.'));
+        } else {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final announcement = snapshot.data![index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: LIGHTGRAY,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade200,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        announcement.title,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        announcement.content,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Created at: ${announcement.createdAt}',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
     );
   }
 }
