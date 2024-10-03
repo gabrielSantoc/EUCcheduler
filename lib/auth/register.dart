@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
+import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
@@ -24,38 +23,35 @@ class _RegisterNewState extends State<RegisterScreen> {
   final _birthDateController = TextEditingController();
   final _emailController = TextEditingController();
   final _confirmEmailController = TextEditingController();
-  
-  late final StreamSubscription<AuthState>  _authSubscription;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    _authSubscription = supabase.auth.onAuthStateChange.listen((event) {
-      final session = event.session;
-
-      if(session != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const StudentScreen())
-        );
-      }
-
-    });
-  }
 
   void registerAccount () async{
     
     try{
-      
-      print("EMAIL ::: ${_emailController.text}");
-      print("PASSWORD ::: ${_birthDateController.text}");
-      await supabase.auth.signUp(
+
+      LoadingDialog.showLoading(context);
+      await Future.delayed(const Duration(seconds: 3));
+
+      final AuthResponse res = await supabase.auth.signUp(
         email: _emailController.text.trim(),
         password: _birthDateController.text.trim(),
       );
-      
+
+      final User? user = res.user; // get authenticated user data object 
+      final String userId = user!.id;  // get user id
+
+      print("NEW USER UIID::: $userId");
+
+      LoadingDialog.hideLoading(context);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const StudentScreen())
+      );
+
+
     }catch(e) {
 
+      Alert.of(context).showError("Invalid input, please retry");
       print("ERROR ::: $e");
 
     }
@@ -223,7 +219,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                     onTap: () {
                       registerAccount();
                     },
-                    buttonName: "Login",
+                    buttonName: "Create",
                   ),
         
                   const SizedBox(height: 15),

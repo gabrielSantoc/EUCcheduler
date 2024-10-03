@@ -4,6 +4,7 @@ import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/screens/testScreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -39,6 +40,13 @@ class _AuthScreenState extends State<AuthScreen> {
       // handle mfa challenge verified
     }
   });
+
+  @override
+  void dispose() {
+    // Cancel the subscription when the widget is disposed to prevent memory leaks
+    authSubscription.cancel();
+    super.dispose();
+  }
   
 
   @override

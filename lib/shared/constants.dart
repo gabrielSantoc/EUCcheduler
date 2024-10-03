@@ -31,24 +31,23 @@ class SpacerClass extends StatelessWidget {
 }
 
 
-class Loading {
-  static void show(BuildContext context) {
+class LoadingDialog {
+  static void showLoading(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false, 
+      barrierDismissible: false, // Prevents dismissing by tapping outside
       builder: (context) {
-        
-        Future.delayed(Duration(seconds: 3), () {
-          Navigator.of(context).pop(); 
-        });
-
         return Center(
           child: LoadingAnimationWidget.fourRotatingDots(
-            color: Color.fromARGB(255, 170, 0, 0),
+            color: MAROON,
             size: 60,
           ),
         );
       },
     );
+  }
+
+  static void hideLoading(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop(); // Dismiss the dialog
   }
 }
