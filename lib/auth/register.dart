@@ -88,6 +88,32 @@ class _RegisterNewState extends State<RegisterScreen> {
     print("USER CREATED SUCCESSFULLY");
   }
 
+  DateTime birthDay = DateTime.now();
+
+  selectDate() async{
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: birthDay,
+      initialDatePickerMode: DatePickerMode.day,
+      firstDate: DateTime(1980),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      birthDay = picked;
+
+      int year = birthDay.year;
+      int month = birthDay.month;
+      int day = birthDay.day;
+
+      String formattedBirthDay = "$year-$month-$day"; 
+      _birthDateController.text = formattedBirthDay;
+
+      print('BIRTHDAYYYY $formattedBirthDay'); 
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,11 +222,19 @@ class _RegisterNewState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  MyTextFormField(
+                  MyTextFieldBrithday(
+                    onTap: () {
+                      selectDate();
+                    },
                     controller: _birthDateController,
                     hintText: "Birthdate",
                     obscureText: false,
                   ),
+                  // MyTextFormField(
+                  //   controller: _birthDateController,
+                  //   hintText: "Birthdate",
+                  //   obscureText: false,
+                  // ),
                   const SizedBox(height: 20),
                   
                   MyTextFormField(
@@ -252,14 +286,7 @@ class _RegisterNewState extends State<RegisterScreen> {
         
                   const SizedBox(height: 15),
         
-                  const Text(
-                    "Your initial password is your birthdate\nin this format YYYY-MM-DD",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  
                 ],
               ),
             ),
