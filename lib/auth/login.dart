@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
+import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
@@ -21,10 +23,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   void login() async {
-    final AuthResponse res = await supabase.auth.signInWithPassword(
-      email: studentNumberController.text.toString(),
-      password: passwordController.text.toString(),
-    );
+
+
+    try {
+
+      LoadingDialog.showLoading(context);
+      await Future.delayed(const Duration(seconds: 3));
+
+      final AuthResponse res = await supabase.auth.signInWithPassword(
+        email: studentNumberController.text.toString(),
+        password: passwordController.text.toString(),
+      );
+
+      final User? user = res.user; // get authenticated user data object 
+      final String userId = user!.id; 
+
+      print("USER UIID::: $userId");
+
+
+      LoadingDialog.hideLoading(context);
+
+      
+
+    } catch(e) {
+      
+      Alert.of(context).showError("Invalid input, please retry");
+      print("ERROR ::: ${e}");
+
+      Navigator.pop(context);
+
+    }
   } 
 
   @override
@@ -109,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   MyTextFormField(
                     controller: passwordController,
                     hintText: "Password",
-                    obscureText: true,
+                    obscureText: false,
                   ),
 
                   const SizedBox(height: 20),

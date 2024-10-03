@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/shared/button.dart';
+import 'package:my_schedule/shared/text_field.dart';
 
-class StudentScreen extends StatelessWidget {
+class StudentScreen extends StatefulWidget {
   
   
   const StudentScreen({super.key});
+
+  @override
+  State<StudentScreen> createState() => _StudentScreenState();
+}
+
+class _StudentScreenState extends State<StudentScreen> {
+
+  final _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +28,22 @@ class StudentScreen extends StatelessWidget {
             const Text(
               "STUDENT'S SCREEN",
               style: TextStyle(fontSize: 30),
+            ),
+
+            const SizedBox(height: 20),
+            
+            MyTextFormField(
+              controller: _emailController,
+              hintText: "Email",
+              obscureText: false
+            ),
+            const SizedBox(height: 20),
+
+            MyButton(
+              onTap: () async{
+                
+              },
+              buttonName: "Reset Password"
             ),
 
             const SizedBox(height: 20),
