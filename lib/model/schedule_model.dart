@@ -1,4 +1,4 @@
-import 'package:http/http.dart';
+
 import 'package:intl/intl.dart';
 
 class SchedModel {
