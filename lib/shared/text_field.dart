@@ -16,6 +16,7 @@ class MyTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
@@ -83,6 +84,69 @@ class MyTextFormFieldForName extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          errorStyle: const TextStyle(
+            fontSize: 11
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.white)
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            // borderSide: BorderSide(color: Colors.grey.shade500)
+            borderSide: const BorderSide(color: Colors.green)
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            // borderSide: BorderSide(color: Colors.grey.shade500)
+            borderSide: const BorderSide(color: Colors.red)
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            // borderSide: BorderSide(color: Colors.grey.shade500)
+            borderSide: const BorderSide(color: Colors.red)
+          ),
+          fillColor: Colors.grey.shade200,
+          filled: true,
+          hintText: hintText,
+          hintStyle: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[500]
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class MyTextFieldBrithday extends StatelessWidget {
+  const MyTextFieldBrithday({
+    super.key,
+    this.controller,
+    required this.hintText,
+    required this.obscureText,
+    required this.onTap
+  });
+
+  final void Function()? onTap;
+  final controller;
+  final String hintText;
+  final bool obscureText;
+      
+  @override
+  Widget build(BuildContext context) {
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: TextFormField(
+        readOnly: true,
+        onTap: onTap,
+        controller: controller,
+        obscureText: obscureText,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           errorStyle: const TextStyle(
