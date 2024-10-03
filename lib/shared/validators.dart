@@ -6,7 +6,8 @@ class Validator {
 
   // STUDENT NO.
   String? validateStudentNumber(String? studentNumber) {
-    RegExp studentNumberRegex = RegExp(r'^A\d{2}-\d{4}$');
+    // RegExp studentNumberRegex = RegExp(r'^A\d{2}-\d{4}$');
+    RegExp studentNumberRegex = RegExp(r'^A\d{2}-\d{4}$', caseSensitive: false);
     final isStudentNumberValid = studentNumberRegex.hasMatch(studentNumber ?? '');
     if (studentNumber.toString().isEmpty) {
       return 'Student number cannot be empty';
@@ -34,8 +35,12 @@ class Validator {
   String? validateConfirmEmail(String? email, String? originalEmail) {
     RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\w{2,3}(\.\w{2,3})?$');
     final isEmailValid = emailRegex.hasMatch(email ?? '');
-    if( email.toString() != originalEmail.toString()) {
+
+    if(email.toString().isEmpty) {
       return 'Email cannot be empty';
+    }
+    if( email.toString() != originalEmail.toString()) {
+      return 'Please ensure that both email addresses match. ';
     }
     if(!isEmailValid) {
       return 'Please enter a valid email';

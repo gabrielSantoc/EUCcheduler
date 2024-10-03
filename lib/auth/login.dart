@@ -44,6 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
         print("USER UIID::: $userId");
         LoadingDialog.hideLoading(context);
 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StudentScreen())
+        );
+
+
       } catch(e) {
         
         Alert.of(context).showError("Invalid input, please retry");
