@@ -37,10 +37,21 @@ class _RegisterNewState extends State<RegisterScreen> {
       );
 
       final User? user = res.user; // get authenticated user data object 
-      final String userId = user!.id;  // get user id
+      final String _userId = user!.id;  // get user id
 
-      print("NEW USER UIID::: $userId");
 
+      await createUser(
+        _studentNumberController.text.trim(),
+        _firstNameController.text.trim(),
+        _lastNameController.text.trim(),
+        _sectionController.text.trim(),
+        _birthDateController.text.trim(),
+        _emailController.text.trim(), 
+        _userId
+      );
+
+      print("NEW USER UIID::: $_userId");
+     
       LoadingDialog.hideLoading(context);
 
       Navigator.push(
@@ -59,6 +70,23 @@ class _RegisterNewState extends State<RegisterScreen> {
     
 
   }   
+
+  createUser(idNumber, firstName, lastName, section, birthdate, email, userId ) async {
+    await Supabase.instance.client
+    .from('tbl_users')
+    .insert({
+      'first_name': firstName,
+      'last_name' : lastName,
+      'email' : email,
+      'section' : section,
+      'id_number' : idNumber,
+      'user_type' : 'student',
+      'birthday' : birthdate,
+      'auth_id' : userId
+    });
+
+    print("USER CREATED SUCCESSFULLY");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +164,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                           child: MyTextFormFieldForName(
                             controller: _firstNameController,
                             hintText: "First Name",
-                            obscureText: true,
+                            obscureText: false,
                           ),
                         ),
 
@@ -146,7 +174,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                           child: MyTextFormFieldForName(
                             controller: _lastNameController,
                             hintText: "Last Name",
-                            obscureText: true,
+                            obscureText: false,
                           ),
                         ),
                     
@@ -164,7 +192,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                   MyTextFormField(
                     controller: _sectionController,
                     hintText: "Section",
-                    obscureText: true,
+                    obscureText: false,
                   ),
                   const SizedBox(height: 20),
 
