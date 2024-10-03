@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_schedule/auth/auth.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/text_field.dart';
@@ -51,6 +52,10 @@ class _StudentScreenState extends State<StudentScreen> {
             MyButton(
               onTap: () async{
                 await supabase.auth.signOut();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AuthScreen())
+                );
               },
               buttonName: "Log out"
             )
