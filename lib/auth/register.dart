@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
@@ -16,6 +18,14 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterNewState extends State<RegisterScreen> {
+
+  @override
+  Future<void> initState() async {
+    // TODO: implement initState
+    super.initState();
+    await getAllAvailableSections();
+  }
+
   final _studentNumberController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -24,6 +34,7 @@ class _RegisterNewState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _confirmEmailController = TextEditingController();
 
+  // FUNCTION TO CREATE A NEW ACCOUNT
   void registerAccount () async{
     
     try{
@@ -71,6 +82,7 @@ class _RegisterNewState extends State<RegisterScreen> {
 
   }   
 
+  // FUNCTION TO INSERT THE NEW USER INTO THE DB
   createUser(idNumber, firstName, lastName, section, birthdate, email, userId ) async {
     await Supabase.instance.client
     .from('tbl_users')
@@ -89,7 +101,6 @@ class _RegisterNewState extends State<RegisterScreen> {
   }
 
   DateTime birthDay = DateTime.now();
-
   selectDate() async{
 
     final DateTime? picked = await showDatePicker(
@@ -113,6 +124,69 @@ class _RegisterNewState extends State<RegisterScreen> {
       print('BIRTHDAYYYY $formattedBirthDay'); 
     }
   }
+
+
+
+  // Function to show the section picker
+  // List of sections
+
+
+  Future<void> getAllAvailableSections() async {
+    
+    try{
+      
+      List<String> availableSections = [];
+      final selectAllSection = await 
+      Supabase.instance.client
+      .from('tbl_users')
+      .select();
+
+
+      
+    } catch (e) {
+      print("ERROR ::: $e");
+    }
+
+  }
+
+  final List<String> _sections = [
+    "BSCS-1",
+    "BSCS-2",
+    "BSCS-3",
+    "BSCS-3A",
+    "BSCS-4",
+  ];
+
+  Future<void> selectSection() async {
+    // Show the Cupertino modal popup
+    await showCupertinoModalPopup<String>(
+      context: context,
+      builder: (_) {
+        return SizedBox(
+          width: double.infinity,
+          height: 250,
+          child: CupertinoPicker(
+            onSelectedItemChanged: (int value) {
+              
+              setState(() {
+                _sectionController.text = _sections[value];
+              });
+            },
+            backgroundColor: Colors.white,
+            itemExtent: 30,
+            scrollController: FixedExtentScrollController(
+              initialItem: 0, 
+            ),
+            children: _sections.map((section) => Text(section)).toList(),
+          ),
+        );
+      },
+    );
+
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +289,8 @@ class _RegisterNewState extends State<RegisterScreen> {
 
 
 
-                  MyTextFormField(
+                  MyTextFieldBrithday(
+                    onTap: selectSection,
                     controller: _sectionController,
                     hintText: "Section",
                     obscureText: false,
@@ -223,18 +298,11 @@ class _RegisterNewState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   MyTextFieldBrithday(
-                    onTap: () {
-                      selectDate();
-                    },
+                    onTap: () => selectDate(),
                     controller: _birthDateController,
                     hintText: "Birthdate",
                     obscureText: false,
                   ),
-                  // MyTextFormField(
-                  //   controller: _birthDateController,
-                  //   hintText: "Birthdate",
-                  //   obscureText: false,
-                  // ),
                   const SizedBox(height: 20),
                   
                   MyTextFormField(
