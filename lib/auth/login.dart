@@ -9,6 +9,7 @@ import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
+import 'package:my_schedule/shared/validators.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,36 +23,34 @@ class _LoginScreenState extends State<LoginScreen> {
   final studentNumberController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final loginFormKey = GlobalKey<FormState>();
+
   void login() async {
+    
+    if(loginFormKey.currentState!.validate()) {
 
+      try {
 
-    try {
+        LoadingDialog.showLoading(context);
+        await Future.delayed(const Duration(seconds: 3));
 
-      LoadingDialog.showLoading(context);
-      await Future.delayed(const Duration(seconds: 3));
+        final AuthResponse res = await supabase.auth.signInWithPassword(
+          email: studentNumberController.text.toString(),
+          password: passwordController.text.toString(),
+        );
 
-      final AuthResponse res = await supabase.auth.signInWithPassword(
-        email: studentNumberController.text.toString(),
-        password: passwordController.text.toString(),
-      );
+        final User? user = res.user; // get authenticated user data object 
+        final String userId = user!.id; 
+        print("USER UIID::: $userId");
+        LoadingDialog.hideLoading(context);
 
-      final User? user = res.user; // get authenticated user data object 
-      final String userId = user!.id; 
+      } catch(e) {
+        
+        Alert.of(context).showError("Invalid input, please retry");
+        print("ERROR ::: ${e}");
+        Navigator.pop(context);
 
-      print("USER UIID::: $userId");
-
-
-      LoadingDialog.hideLoading(context);
-
-      
-
-    } catch(e) {
-      
-      Alert.of(context).showError("Invalid input, please retry");
-      print("ERROR ::: ${e}");
-
-      Navigator.pop(context);
-
+      }
     }
   } 
 
@@ -122,76 +121,82 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
 
-              child: Column(
-
-                children: [
-
-                  MyTextFormField(
-                    controller: studentNumberController,
-                    hintText: "Student Number",
-                    obscureText: false,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  MyTextFormField(
-                    controller: passwordController,
-                    hintText: "Password",
-                    obscureText: false,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-
-                    mainAxisAlignment: MainAxisAlignment.center,
-
-                    children: [
-
-                      const Text("Don't have an account? "),
-
-                      const SizedBox(width: 18),
-
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const RegisterScreen())
-                          );
-                        },
-                        child: const Text(
-                          "Register",
-                          style: TextStyle(
-                            color: MAROON,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 25),
-        
-                  MyButton(
-                    onTap: () {
-                      login();
-                    },
-                    buttonName: "Login",
-                  ),
-        
-                  const SizedBox(height: 15),
-        
-                  const Text(
-                    "Your initial password is your birthdate\nin this format YYYY-MM-DD",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
+              child: Form(
+                key: loginFormKey,
+                child: Column(
+                
+                  children: [
+                
+                    MyTextFormField(
+                      controller: studentNumberController,
+                      hintText: "Email address",
+                      obscureText: false,
+                      validator:  Validator.of(context).validateEmail
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  
-                ],
+                
+                    const SizedBox(height: 20),
+                
+                    MyTextFormField(
+                      controller: passwordController,
+                      hintText: "Password",
+                      obscureText: false,
+                      validator: (value)=> Validator.of(context).validateTextField(value, "Password"),
+                    ),
+                
+                    const SizedBox(height: 20),
+                
+                    Row(
+                
+                      mainAxisAlignment: MainAxisAlignment.center,
+                
+                      children: [
+                
+                        const Text("Don't have an account? "),
+                
+                        const SizedBox(width: 18),
+                
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const RegisterScreen())
+                            );
+                          },
+                          child: const Text(
+                            "Register",
+                            style: TextStyle(
+                              color: MAROON,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                
+                        ),
+                      ],
+                    ),
+                
+                    const SizedBox(height: 25),
+                        
+                    MyButton(
+                      onTap: () {
+                       
+                        login();
+                      },
+                      buttonName: "Login",
+                    ),
+                        
+                    const SizedBox(height: 15),
+                        
+                    const Text(
+                      "Your initial password is your birthdate\nin this format YYYY-MM-DD",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    
+                  ],
+                ),
               ),
             ),
           ],
