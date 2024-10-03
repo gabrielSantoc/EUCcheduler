@@ -25,8 +25,9 @@ class MyTextFormField extends StatelessWidget {
         validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
+          
           errorStyle: const TextStyle(
-            fontSize: 11
+            fontSize: 11,
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
           enabledBorder: OutlineInputBorder(
@@ -87,7 +88,7 @@ class MyTextFormFieldForName extends StatelessWidget {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           errorStyle: const TextStyle(
-            fontSize: 11
+            fontSize: 11,
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
           enabledBorder: OutlineInputBorder(
@@ -123,19 +124,21 @@ class MyTextFormFieldForName extends StatelessWidget {
 }
 
 
-class MyTextFieldBrithday extends StatelessWidget {
-  const MyTextFieldBrithday({
+class ReadOnlyTextFormField extends StatelessWidget {
+  const ReadOnlyTextFormField({
     super.key,
     this.controller,
     required this.hintText,
     required this.obscureText,
-    required this.onTap
+    required this.onTap,
+    this.validator
   });
 
   final void Function()? onTap;
   final controller;
   final String hintText;
   final bool obscureText;
+  final String? Function(String?)? validator;
       
   @override
   Widget build(BuildContext context) {
@@ -147,6 +150,7 @@ class MyTextFieldBrithday extends StatelessWidget {
         onTap: onTap,
         controller: controller,
         obscureText: obscureText,
+        validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           errorStyle: const TextStyle(

@@ -9,6 +9,7 @@ import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/text_field.dart';
+import 'package:my_schedule/shared/validators.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -35,52 +36,56 @@ class _RegisterNewState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _confirmEmailController = TextEditingController();
 
-  final loginFormKey = GlobalKey<FormState>();
+  final registerFormKey = GlobalKey<FormState>();
 
   // FUNCTION TO CREATE A NEW ACCOUNT
   void registerAccount () async{
     
-    try{
+    if(registerFormKey.currentState!.validate()) {
 
-      LoadingDialog.showLoading(context);
-      await Future.delayed(const Duration(seconds: 3));
+      try{
 
-      final AuthResponse res = await supabase.auth.signUp(
-        email: _emailController.text.trim(),
-        password: _birthDateController.text.trim(),
-      );
+        LoadingDialog.showLoading(context);
+        await Future.delayed(const Duration(seconds: 3));
 
-      final User? user = res.user; // get authenticated user data object 
-      final String _userId = user!.id;  // get user id
+        final AuthResponse res = await supabase.auth.signUp(
+          email: _emailController.text.trim(),
+          password: _birthDateController.text.trim(),
+        );
 
-
-      await createUser(
-        _studentNumberController.text.trim(),
-        _firstNameController.text.trim(),
-        _lastNameController.text.trim(),
-        _sectionController.text.trim(),
-        _birthDateController.text.trim(),
-        _emailController.text.trim(), 
-        _userId
-      );
-
-      print("NEW USER UIID::: $_userId");
-     
-      LoadingDialog.hideLoading(context);
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const StudentScreen())
-      );
+        final User? user = res.user; // get authenticated user data object 
+        final String _userId = user!.id;  // get user id
 
 
-    }catch(e) {
+        await createUser(
+          _studentNumberController.text.trim(),
+          _firstNameController.text.trim(),
+          _lastNameController.text.trim(),
+          _sectionController.text.trim(),
+          _birthDateController.text.trim(),
+          _emailController.text.trim(), 
+          _userId
+        );
 
-      Alert.of(context).showError("Invalid input, please retry");
-      print("ERROR ::: $e");
+        print("NEW USER UIID::: $_userId");
+      
+        LoadingDialog.hideLoading(context);
 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StudentScreen())
+        );
+
+
+      }catch(e) {
+
+        Alert.of(context).showError("Invalid input, please retry");
+        print("ERROR ::: $e");
+
+      }
     }
 
+    
     
 
   }   
@@ -180,6 +185,7 @@ class _RegisterNewState extends State<RegisterScreen> {
               setState(() {
                 _sectionController.text = _sections[value];
               });
+              print('SECTION :::: ${_sections[value]}'); 
             },
             backgroundColor: Colors.white,
             itemExtent: 30,
@@ -197,7 +203,7 @@ class _RegisterNewState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: MAROON,
       body: SingleChildScrollView(
         child: Column(
@@ -233,7 +239,8 @@ class _RegisterNewState extends State<RegisterScreen> {
             Container(
               
               height: MediaQuery.of(context).size.height * 0.8, 
-              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+              // padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+              padding: const EdgeInsets.symmetric( horizontal: 20),
               
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -250,119 +257,131 @@ class _RegisterNewState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-
-                  MyTextFormField(
-                    controller: _studentNumberController,
-                    hintText: "Student Number",
-                    obscureText: false,
-                  ),
-
-                  const SizedBox(height: 20),
-
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: MyTextFormFieldForName(
-                            controller: _firstNameController,
-                            hintText: "First Name",
-                            obscureText: false,
-                          ),
-                        ),
-
-                        const SizedBox(width: 5),
-
-                        Expanded(
-                          child: MyTextFormFieldForName(
-                            controller: _lastNameController,
-                            hintText: "Last Name",
-                            obscureText: false,
-                          ),
-                        ),
-                    
-                    
-                      ],
-                    ),
-                  ),
-
-
-                  
-                  const SizedBox(height: 20),
-
-
-
-                  MyTextFieldBrithday(
-                    onTap: selectSection,
-                    controller: _sectionController,
-                    hintText: "Section",
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 20),
-
-                  MyTextFieldBrithday(
-                    onTap: () => selectDate(),
-                    controller: _birthDateController,
-                    hintText: "Birthdate",
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  MyTextFormField(
-                    controller: _emailController,
-                    hintText: "Email",
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  MyTextFormField(
-                    controller: _confirmEmailController,
-                    hintText: "Confirm Email",
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 20),
-
-
-                  Row(
+              child: Form(
+                key: registerFormKey,
+                child: SingleChildScrollView(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Already have an account? "),
-                      const SizedBox(width: 18),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginScreen())
-                          );
-                        },
-                        child: const Text(
-                          "Log in",
-                          style: TextStyle(
-                            color: MAROON,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      
+                      const SizedBox(height: 40),
+
+                      MyTextFormField(
+                        controller: _studentNumberController,
+                        hintText: "Student Number",
+                        obscureText: false,
+                        validator: Validator.of(context).validateStudentNumber,
+                      ),
+                  
+                      const SizedBox(height: 20),
+                  
+                  
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: MyTextFormFieldForName(
+                                controller: _firstNameController,
+                                hintText: "First Name",
+                                obscureText: false,
+                                validator: (value)=> Validator.of(context).validateTextField(value, "First name"),
+                              ),
+                            ),
+                  
+                            const SizedBox(width: 5),
+                  
+                            Expanded(
+                              child: MyTextFormFieldForName(
+                                controller: _lastNameController,
+                                hintText: "Last Name",
+                                obscureText: false,
+                                validator: (value)=> Validator.of(context).validateTextField(value, "Last name"),
+                              ),
+                            ),
+                        
+                        
+                          ],
                         ),
                       ),
-                    ],
-
-                  ),
-                  const SizedBox(height: 25),
-        
-                  MyButton(
-                    onTap: () {
-                      registerAccount();
-                    },
-                    buttonName: "Create",
-                  ),
-        
-                  const SizedBox(height: 15),
-        
                   
-                ],
+                  
+                      
+                      const SizedBox(height: 20),
+                  
+                  
+                  
+                      ReadOnlyTextFormField(
+                        onTap: selectSection,
+                        controller: _sectionController,
+                        hintText: "Section",
+                        obscureText: false,
+                        validator: (value)=> Validator.of(context).validateTextField(value, "Birth Date"),
+                      ),
+                      const SizedBox(height: 20),
+                  
+                      ReadOnlyTextFormField(
+                        onTap: () => selectDate(),
+                        controller: _birthDateController,
+                        hintText: "Birthdate",
+                        obscureText: false,
+                        validator: (value)=> Validator.of(context).validateTextField(value, "Section"),
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      MyTextFormField(
+                        controller: _emailController,
+                        hintText: "Email addres",
+                        obscureText: false,
+                        validator: Validator.of(context).validateEmail,
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      MyTextFormField(
+                        controller: _confirmEmailController,
+                        hintText: "Confirm email address",
+                        obscureText: false,
+                        validator: (value)=> Validator.of(context).validateConfirmEmail(value, _emailController.text)
+                      ),
+                      const SizedBox(height: 20),
+                  
+                  
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Already have an account? "),
+                          const SizedBox(width: 18),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const LoginScreen())
+                              );
+                            },
+                            child: const Text(
+                              "Log in",
+                              style: TextStyle(
+                                color: MAROON,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                  
+                      ),
+                      const SizedBox(height: 25),
+                          
+                      MyButton(
+                        onTap: () {
+                          registerAccount();
+                        },
+                        buttonName: "Create",
+                      ),
+
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],

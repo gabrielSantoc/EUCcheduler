@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
-import 'package:my_schedule/screens/testScreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
