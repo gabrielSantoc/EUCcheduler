@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
+import 'package:my_schedule/model/section_model.dart';
 import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
@@ -20,10 +21,10 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterNewState extends State<RegisterScreen> {
 
   @override
-  Future<void> initState() async {
+  initState() {
     // TODO: implement initState
     super.initState();
-    await getAllAvailableSections();
+    getAllAvailableSections();
   }
 
   final _studentNumberController = TextEditingController();
@@ -130,32 +131,38 @@ class _RegisterNewState extends State<RegisterScreen> {
   // Function to show the section picker
   // List of sections
 
-
+  final List<String> _sections = [];
   Future<void> getAllAvailableSections() async {
     
     try{
       
-      List<String> availableSections = [];
       final selectAllSection = await 
       Supabase.instance.client
-      .from('tbl_users')
+      .from('tbl_section')
       .select();
+      
+      for(var s in selectAllSection) {
+        var section = SectionModel(
+          sectionName: s['section']
+        );
 
+        _sections.add(s['section']);
+      }
 
+      for(var s in _sections) {
+        print("SECTION ::: ${s}");
+      }
+     
       
     } catch (e) {
+
       print("ERROR ::: $e");
+      
     }
 
   }
 
-  final List<String> _sections = [
-    "BSCS-1",
-    "BSCS-2",
-    "BSCS-3",
-    "BSCS-3A",
-    "BSCS-4",
-  ];
+  
 
   Future<void> selectSection() async {
     // Show the Cupertino modal popup
