@@ -35,6 +35,8 @@ class _RegisterNewState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _confirmEmailController = TextEditingController();
 
+  final loginFormKey = GlobalKey<FormState>();
+
   // FUNCTION TO CREATE A NEW ACCOUNT
   void registerAccount () async{
     
@@ -157,7 +159,7 @@ class _RegisterNewState extends State<RegisterScreen> {
     } catch (e) {
 
       print("ERROR ::: $e");
-      
+
     }
 
   }
@@ -192,12 +194,10 @@ class _RegisterNewState extends State<RegisterScreen> {
 
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       backgroundColor: MAROON,
       body: SingleChildScrollView(
         child: Column(
