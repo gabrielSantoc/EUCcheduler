@@ -12,18 +12,24 @@ class ViewPage extends StatefulWidget {
   final String subjectName;
   final int schedId;
 
-  ViewPage(
-      {required this.startTime,
-      required this.endTime,
-      required this.profName,
-      required this.subjectName,
-      required this.schedId,
-      super.key});
+  ViewPage({
+    required this.startTime,
+    required this.endTime,
+    required this.profName,
+    required this.subjectName,
+    required this.schedId,
+    super.key,
+  });
+
   @override
   ViewPageState createState() => ViewPageState();
 }
 
 class ViewPageState extends State<ViewPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +149,10 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
       final response = await Supabase.instance.client
           .from('tbl_announcement')
           .select()
-          .eq('schedule_id', widget.schedId);
+          .eq('schedule_id', widget.schedId)
+          .order('id',ascending: false);
+
+          
 
       return AnnouncementModel.jsonToList(response);
     } catch (e) {
