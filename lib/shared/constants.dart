@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/main.dart';
 
 const MAROON = Color(0xFF862349);
 const WHITE = Color(0xFFFFFFFF);
 const LIGHTGRAY = Color(0xFFECECEC);
 const GRAY = Color(0xFF8F8E8E);
-
-final api_key = dotenv.env['API_KEY'];
-
 Widget vSpacerWidth(double width) {
 
   return SizedBox(
@@ -34,24 +33,61 @@ class SpacerClass extends StatelessWidget {
 }
 
 
-class Loading {
-  static void show(BuildContext context) {
+class LoadingDialog {
+  static void showLoading(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false, 
+      barrierDismissible: false, // Prevents dismissing by tapping outside
       builder: (context) {
-        
-        Future.delayed(Duration(seconds: 3), () {
-          Navigator.of(context).pop(); 
-        });
-
         return Center(
           child: LoadingAnimationWidget.fourRotatingDots(
-            color: Color.fromARGB(255, 170, 0, 0),
+            color: MAROON,
             size: 60,
           ),
         );
       },
+    );
+  }
+
+  static void hideLoading(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop(); // Dismiss the dialog
+  }
+}
+
+class DrawerClass extends StatelessWidget {
+  const DrawerClass({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            child: Image.asset('assets/images/emoji.png'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('About Developers'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.help_center_rounded),
+            title: const Text('FAQ'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout_outlined  ),
+            title: const Text('Sign Out'),
+            onTap: () async{
+              await supabase.auth.signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AuthScreen())
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

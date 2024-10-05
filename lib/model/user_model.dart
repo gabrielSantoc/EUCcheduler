@@ -1,5 +1,4 @@
 
-import 'package:http/http.dart';
 
 class UserModel {
   late final String firstName;
