@@ -3,7 +3,6 @@ import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -62,7 +61,7 @@ class _AuthScreenState extends State<AuthScreen> {
           
           if(snapshot.hasData) {
 
-            print("SESSION ::: ${session}");
+            print("SESSION ::: $session");
             if(session != null) {
 
               return const StudentScreen();

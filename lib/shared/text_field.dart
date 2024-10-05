@@ -18,7 +18,7 @@ class MyTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      padding: const EdgeInsets.symmetric(horizontal: 23.0),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
@@ -29,7 +29,7 @@ class MyTextFormField extends StatelessWidget {
           errorStyle: const TextStyle(
             fontSize: 11,
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.white)
@@ -90,7 +90,7 @@ class MyTextFormFieldForName extends StatelessWidget {
           errorStyle: const TextStyle(
             fontSize: 11,
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.white)
@@ -156,7 +156,7 @@ class ReadOnlyTextFormField extends StatelessWidget {
           errorStyle: const TextStyle(
             fontSize: 11
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.white)

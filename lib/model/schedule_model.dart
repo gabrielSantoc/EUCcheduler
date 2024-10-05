@@ -18,9 +18,9 @@ class SchedModel {
     required String rawEndTime,
     required this.dayOfWeek,
   }) {
-    this.startTime = _formatTime(rawStartTime);
-    this.endTime = _formatTime(rawEndTime);
-    this.dayIndex = _mapDayToIndex(this.dayOfWeek);
+    startTime = _formatTime(rawStartTime);
+    endTime = _formatTime(rawEndTime);
+    dayIndex = _mapDayToIndex(dayOfWeek);
   }
 
   static List<SchedModel> jsonToList(List<dynamic> jsonList) {

@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_schedule/model/user_model.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:http/http.dart' as http;
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -93,7 +90,7 @@ class TestScreenState extends State<TestScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Users"),
+        title: const Text("Users"),
       ),
       
       body: StreamBuilder<List<Map<String,dynamic>>>(
@@ -186,7 +183,7 @@ class TestScreenState extends State<TestScreen> {
                         ).then((context) {
                           firstNameController.clear();
                           lastNameController.clear();
-                        });;
+                        });
                       },
                       icon: const Icon(Icons.edit, color: Colors.black)
                     ),

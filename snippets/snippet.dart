@@ -51,10 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
       showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 3));
+          Future.delayed(const Duration(seconds: 3));
           return  Center(
               child: LoadingAnimationWidget.fourRotatingDots(
-                color: Color.fromARGB(255, 170, 0, 0),
+                color: const Color.fromARGB(255, 170, 0, 0),
                 size: 60,
               )
             );
