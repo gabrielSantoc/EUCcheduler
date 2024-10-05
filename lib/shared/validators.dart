@@ -52,13 +52,13 @@ class Validator {
   // VALIDATE NORMAL TEXT FIELD 
   String? validateTextField(String? value, String fieldName) {
     if(value.toString().isEmpty) {
-      return '${fieldName} cannot be empty';
+      return '$fieldName cannot be empty';
     }
     if(value.toString().length <= 1) {
-      return '${fieldName} must be more than one character';
+      return '$fieldName must be more than one character';
     }
     if(value.toString().isEmpty || value == null ) {
-      return '${fieldName} must be more than one character';
+      return '$fieldName must be more than one character';
     }
     return null;
   }

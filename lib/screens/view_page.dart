@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:my_schedule/model/announcement_model.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,7 +11,7 @@ class ViewPage extends StatefulWidget {
   final String subjectName;
   final int schedId;
 
-  ViewPage(
+  const ViewPage(
       {required this.startTime,
       required this.endTime,
       required this.profName,
@@ -36,13 +35,13 @@ class ViewPageState extends State<ViewPage> {
         children: [
           Text(
             widget.subjectName,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 32, fontWeight: FontWeight.bold, color: WHITE),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Padding(
-            padding: EdgeInsets.all(23),
+            padding: const EdgeInsets.all(23),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -70,13 +69,13 @@ class ViewPageState extends State<ViewPage> {
                     Text(
                       "${widget.startTime}-${widget.endTime}",
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                          const TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       widget.profName,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                          const TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
                   ],
                 ),
@@ -85,24 +84,24 @@ class ViewPageState extends State<ViewPage> {
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25),
                     topRight: Radius.circular(25)),
-                color: const Color.fromARGB(255, 255, 255, 255),
+                color: Color.fromARGB(255, 255, 255, 255),
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'ANNOUNCEMENTS',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 0, 0, 0),
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -160,16 +159,16 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               Center(
                   child: LoadingAnimationWidget.staggeredDotsWave(
                       color: MAROON, size: 50)),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Text(
+              const Text(
                 "Looking for announcements...",
                 style: TextStyle(color: GRAY, fontSize: 15),
               )
@@ -178,7 +177,7 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No announcements available.'));
+          return const Center(child: Text('No announcements available.'));
         } else {
           return ListView.builder(
             itemCount: snapshot.data!.length,

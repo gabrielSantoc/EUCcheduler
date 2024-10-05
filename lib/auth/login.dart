@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/student_screen.dart';
@@ -50,10 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
 
-      } catch(e) {
+      } on AuthException catch(e) {
         
-        Alert.of(context).showError("Invalid input, please retry");
-        print("ERROR ::: ${e}");
+        Alert.of(context).showError(e.message);
+        print("ERROR ::: ${e.code}");
         Navigator.pop(context);
 
       }
@@ -63,8 +62,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       backgroundColor: MAROON,
       body: SingleChildScrollView(
+        
         child: Column(
           children: [
         
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 10),
                   
                   Text(
-                    "Sign in to Continue!",
+                    "Login in to Continue!",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.normal,
@@ -107,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
             
             // BOTTOM MAROON CONTAINER
             Container(
-              height: MediaQuery.of(context).size.height * 0.5, 
+              height: MediaQuery.of(context).size.height * 0.6, 
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               
               decoration: const BoxDecoration(

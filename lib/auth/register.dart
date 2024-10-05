@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/model/section_model.dart';
@@ -46,7 +45,7 @@ class _RegisterNewState extends State<RegisterScreen> {
       try{
 
         LoadingDialog.showLoading(context);
-        await Future.delayed(const Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 2));
 
         final AuthResponse res = await supabase.auth.signUp(
           email: _emailController.text.trim(),
@@ -54,9 +53,9 @@ class _RegisterNewState extends State<RegisterScreen> {
         );
 
         final User? user = res.user; // get authenticated user data object 
-        final String _userId = user!.id;  // get user id
+        final String userId = user!.id;  // get user id
 
-
+        
         await createUser(
           _studentNumberController.text.trim(),
           _firstNameController.text.trim(),
@@ -64,12 +63,12 @@ class _RegisterNewState extends State<RegisterScreen> {
           _sectionController.text.trim(),
           _birthDateController.text.trim(),
           _emailController.text.trim(), 
-          _userId
+          userId
         );
 
-        print("NEW USER UIID::: $_userId");
+        print("NEW USER UIID::: $userId");
       
-        LoadingDialog.hideLoading(context);
+        
 
         Navigator.push(
           context,
@@ -77,10 +76,10 @@ class _RegisterNewState extends State<RegisterScreen> {
         );
 
 
-      }catch(e) {
-
-        Alert.of(context).showError("Invalid input, please retry");
-        print("ERROR ::: $e");
+      } on AuthException catch(e) {
+        LoadingDialog.hideLoading(context);
+        Alert.of(context).showError(e.message);
+        print("ERROR ::: ${e.code}");
 
       }
     }
@@ -157,7 +156,7 @@ class _RegisterNewState extends State<RegisterScreen> {
       }
 
       for(var s in _sections) {
-        print("SECTION ::: ${s}");
+        print("SECTION ::: $s");
       }
      
       
@@ -224,7 +223,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                   Text(
                     "Create Account",
                     style: TextStyle(
-                      fontSize: 45,
+                      fontSize: 37,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
