@@ -168,6 +168,7 @@ class _ScheduleListState extends State<ScheduleList> {
   late Future<List<SchedModel>> schedFuture;
   Map<int, bool> newAnnouncementsMap = {};
   late Box<String> announcementsBox;
+  Map<int, String> latestAnnouncementTimes = {};
 
   @override
   void initState() {
@@ -205,8 +206,6 @@ class _ScheduleListState extends State<ScheduleList> {
         .select('schedule_id, created_at')
         .order('created_at', ascending: false);
 
-    Map<int, String> latestAnnouncementTimes = {};
-
     for (var announcement in response) {
       int schedId = announcement['schedule_id'];
       String createdAt = announcement['created_at'];
@@ -224,13 +223,17 @@ class _ScheduleListState extends State<ScheduleList> {
         newAnnouncementsMap[schedId] = true;
       }
     }
-
-    // Update the Hive box with the latest announcement times
-    for (var entry in latestAnnouncementTimes.entries) {
-      await announcementsBox.put('last_viewed_${entry.key}', entry.value);
-    }
   }
 
+  void updateLastViewedTime(int schedId) async {
+    String? latestTime = latestAnnouncementTimes[schedId];
+    if (latestTime != null) {
+      await announcementsBox.put('last_viewed_$schedId', latestTime);
+      setState(() {
+        newAnnouncementsMap[schedId] = false;
+      });
+    }
+  }
   bool checkIfCurrentTime(String startTime, String endTime) {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
@@ -313,9 +316,7 @@ class _ScheduleListState extends State<ScheduleList> {
                 isCurrentTime: isCurrentTime,
                 hasNewAnnouncement: hasNewAnnouncement,
                 onTap: () {
-                  setState(() {
-                    newAnnouncementsMap[schedule.schedId] = false;
-                  });
+                  updateLastViewedTime(schedule.schedId);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -414,6 +415,7 @@ class ScheduleListItem extends StatelessWidget {
                       child: badges.Badge(
                         position: badges.BadgePosition.topEnd(),
                         showBadge: hasNewAnnouncement,
+                        
                         badgeStyle: badges.BadgeStyle(
                           badgeColor: Colors.transparent,
                         ),
