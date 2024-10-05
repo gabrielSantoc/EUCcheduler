@@ -6,7 +6,6 @@ import 'package:my_schedule/shared/text_field.dart';
 
 class StudentScreen extends StatefulWidget {
   
-  
   const StudentScreen({super.key});
 
   @override

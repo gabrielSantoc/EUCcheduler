@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/main.dart';
-import 'package:my_schedule/screens/student_screen.dart';
+import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -64,7 +64,7 @@ class _AuthScreenState extends State<AuthScreen> {
             print("SESSION ::: $session");
             if(session != null) {
 
-              return const StudentScreen();
+              return const ScheduleScreen();
 
             } else {
 

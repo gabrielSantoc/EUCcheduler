@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/main.dart';
-import 'package:my_schedule/screens/student_screen.dart';
+import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const StudentScreen())
+          MaterialPageRoute(builder: (context) => const ScheduleScreen())
         );
 
 
