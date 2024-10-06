@@ -81,11 +81,11 @@ class _TeacherScreenState extends State<TeacherScreen> {
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25),
                     topRight: Radius.circular(25)),
-                color: const Color.fromARGB(255, 255, 255, 255),
+                color: Color.fromARGB(255, 255, 255, 255),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +108,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             width: 50,
                             height: 60,
                             child: Container(
-                              margin: EdgeInsets.all(3),
+                              margin: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 color:
@@ -123,8 +123,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                     style: TextStyle(
                                         fontSize: 19,
                                         color: selectedDay == index
-                                            ? Color.fromARGB(255, 255, 255, 255)
-                                            : Color.fromARGB(255, 0, 0, 0),
+                                            ? const Color.fromARGB(255, 255, 255, 255)
+                                            : const Color.fromARGB(255, 0, 0, 0),
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -135,8 +135,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                       }).toList(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 45),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 45),
                     child: Text(
                       "Time            Course",
                       style: TextStyle(color: GRAY),
@@ -162,7 +162,7 @@ class ScheduleList extends StatefulWidget {
   final int selectedDay;
   final ScrollController scrollController;
 
-  ScheduleList({required this.selectedDay, required this.scrollController});
+  const ScheduleList({super.key, required this.selectedDay, required this.scrollController});
 
   @override
   State<ScheduleList> createState() => _ScheduleListState();
@@ -200,16 +200,16 @@ class _ScheduleListState extends State<ScheduleList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               Center(
                   child: LoadingAnimationWidget.staggeredDotsWave(
                       color: MAROON, size: 50)),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Text(
+              const Text(
                 "Just a moment, retrieving schedule...",
                 style: TextStyle(color: GRAY, fontSize: 15),
               )
@@ -218,7 +218,7 @@ class _ScheduleListState extends State<ScheduleList> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No schedules available'));
+          return const Center(child: Text('No schedules available'));
         }
 
         List<SchedModel> allSched = snapshot.data!;
@@ -227,7 +227,7 @@ class _ScheduleListState extends State<ScheduleList> {
             .toList();
 
         int highlightedIndex = filteredSchedules.indexWhere((schedule) {
-          return checkIfCurrentTime(schedule.startTime!, schedule.endTime!);
+          return checkIfCurrentTime(schedule.startTime, schedule.endTime);
         });
 
         if (highlightedIndex != -1) {
@@ -246,7 +246,7 @@ class _ScheduleListState extends State<ScheduleList> {
           itemBuilder: (context, index) {
             var schedule = filteredSchedules[index];
             bool isCurrentTime =
-                checkIfCurrentTime(schedule.startTime!, schedule.endTime!);
+                checkIfCurrentTime(schedule.startTime, schedule.endTime);
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -257,27 +257,27 @@ class _ScheduleListState extends State<ScheduleList> {
                     // Time Column
                     Container(
                       width: 80,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           border:
                               Border(right: BorderSide(width: 2, color: GRAY))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          SizedBox(height: 18),
+                          const SizedBox(height: 18),
                           Padding(
                             padding: const EdgeInsets.only(right: 12),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  schedule.startTime!,
+                                  schedule.startTime,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  schedule.endTime!,
+                                  schedule.endTime,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -298,7 +298,7 @@ class _ScheduleListState extends State<ScheduleList> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            splashColor: Color.fromARGB(29, 0, 0, 0),
+                            splashColor: const Color.fromARGB(29, 0, 0, 0),
                             borderRadius: BorderRadius.circular(8.0),
                             onTap: () {
                               Navigator.push(
@@ -317,7 +317,7 @@ class _ScheduleListState extends State<ScheduleList> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    schedule.subject!,
+                                    schedule.subject,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -329,7 +329,7 @@ class _ScheduleListState extends State<ScheduleList> {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    schedule.profName!,
+                                    schedule.profName,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: isCurrentTime
@@ -364,7 +364,7 @@ class _ScheduleListState extends State<ScheduleList> {
     final scheduleEndTime = _parseTimeString(endTime, now);
 
     // Define a time range (1 minute before the start_time and up to the end_time)
-    final lowerBound = scheduleStartTime.subtract(Duration(minutes: 1));
+    final lowerBound = scheduleStartTime.subtract(const Duration(minutes: 1));
     final upperBound = scheduleEndTime;
 
     // Check if the current time falls within the range
