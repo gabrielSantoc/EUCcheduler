@@ -11,7 +11,7 @@ class ViewPage extends StatefulWidget {
   final String subjectName;
   final int schedId;
 
-  ViewPage({
+  const ViewPage({
     required this.startTime,
     required this.endTime,
     required this.profName,
@@ -54,35 +54,42 @@ class ViewPageState extends State<ViewPage> {
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     SizedBox(height: 8),
+
                     Text(
                       'Time',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
+
                     SizedBox(height: 8),
+
                     Text(
                       'Teacher',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
+
                   ],
                 ),
+                
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+
                     const SizedBox(height: 8),
+
                     Text(
                       "${widget.startTime}-${widget.endTime}",
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
+
                     const SizedBox(height: 8),
+
                     Text(
                       widget.profName,
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, color: WHITE),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: WHITE),
                     ),
+
                   ],
                 ),
               ],
@@ -92,13 +99,16 @@ class ViewPageState extends State<ViewPage> {
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25)),
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25)
+                ),
                 color: Color.fromARGB(255, 255, 255, 255),
               ),
               child: Column(
                 children: [
+                  
                   const SizedBox(height: 10),
+
                   const Text(
                     'ANNOUNCEMENTS',
                     style: TextStyle(
@@ -107,13 +117,16 @@ class ViewPageState extends State<ViewPage> {
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
+
                   const SizedBox(height: 16),
+
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: AnnouncementCard(schedId: widget.schedId),
                     ),
                   ),
+                  
                 ],
               ),
             ),
@@ -211,20 +224,26 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      
                       Text(
                         announcement.title,
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
+
                       const SizedBox(height: 8),
+
                       Text(
                         announcement.content,
                         style: const TextStyle(fontSize: 16),
                       ),
+
                       const SizedBox(height: 8),
+
                       Text(
                         'Created at: ${announcement.createdAt}',
                         style: const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
+                      
                     ],
                   ),
                 ),

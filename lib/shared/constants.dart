@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 
 const MAROON = Color(0xFF862349);
@@ -80,6 +81,7 @@ class DrawerClass extends StatelessWidget {
             title: const Text('Sign Out'),
             onTap: () async{
               await supabase.auth.signOut();
+              boxUserCredentials.clear();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AuthScreen())

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -10,6 +12,10 @@ void main() async{
     url: "***REMOVED***",
     anonKey: "***REMOVED***",
   );
+
+  // BOXES
+  await Hive.initFlutter();
+  boxUserCredentials = await Hive.openBox<String>('userIdBox');
 
   runApp(const MyApp());
 }
