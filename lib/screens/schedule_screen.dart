@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/model/schedule_model.dart';
+import 'package:my_schedule/model/user_model.dart';
 import 'package:my_schedule/screens/view_page.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:my_schedule/shared/schedule_list_item.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:badges/badges.dart' as badges;
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -21,11 +23,41 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
 
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+
+  @override
+  void initState() {
+    getCredentials();
+    super.initState();
+  }
+
+  // So need ko gumawa dito ng query para makuha yung mga credential ng specific user na nag login, gagamitin ko yung user id na nilagay ko sa hive
+  UserModel? userInfo; // Bali laman nito yung credentials nung user na ni query, 
+  void getCredentials() async{
+    final userCredentials =  await Supabase.instance.client
+    .from('tbl_users')
+    .select()
+    .eq('auth_id', boxUserId.get('userId'));
+    print("USER CREDENTIALS ::: $userCredentials");
+
+    for(var data in userCredentials) {
+      userInfo =  UserModel(
+        firstName: data['first_name'],
+        lastName: data['last_name'], 
+        section: data['section'],
+        email: data['email'], 
+        birthday: data['birthday'], 
+        userType: data['user_type']
+      );
+    }
+    setState(() {});
+  } 
+  
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +78,23 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Juan Dela Cruztzy",
-                  style: TextStyle(
-                      fontSize: 30, color: WHITE, fontWeight: FontWeight.bold),
+                  userInfo != null ?"${userInfo!.firstName} ${userInfo!.lastName}" : 'Loading...',
+                  style: const TextStyle(
+                    fontSize: 30,
+                    color: WHITE,
+                    fontWeight: FontWeight.bold
+                  ),
                 ),
+
                 Text(
-                  "BSCS-4",
-                  style: TextStyle(
+                  userInfo != null ?"${userInfo!.section}" : 'Loading...',
+                  style: const TextStyle(
                     fontSize: 20,
                     color: WHITE,
                   ),
@@ -70,8 +106,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25)),
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25)
+                ),
                 color: Colors.white,
               ),
               child: Column(
@@ -79,7 +116,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 10),
+                      vertical: 14, horizontal: 10
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: days.asMap().entries.map((entry) {
@@ -293,7 +331,7 @@ class _ScheduleListState extends State<ScheduleList> {
           }
 
           List<SchedModel> allSched = snapshot.data!;
-          List<SchedModel> filteredSchedules = allSched
+          List<SchedModel>filteredSchedules = allSched
               .where((schedule) => schedule.dayIndex == widget.selectedDay)
               .toList();
 
