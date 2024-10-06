@@ -316,7 +316,7 @@ class _ScheduleListState extends State<ScheduleList> {
                 isCurrentTime: isCurrentTime,
                 hasNewAnnouncement: hasNewAnnouncement,
                 onTap: () {
-                  updateLastViewedTime(schedule.schedId);
+                  updateLastViewedTime(schedule.schedId);//only updates hive when sched is tapped
                   Navigator.push(
                     context,
                     MaterialPageRoute(
