@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/login.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/model/section_model.dart';
+import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
@@ -55,6 +57,8 @@ class _RegisterNewState extends State<RegisterScreen> {
         final User? user = res.user; // get authenticated user data object 
         final String userId = user!.id;  // get user id
 
+        print("NEW USER UIID::: $userId");
+        boxUserCredentials.put("userId", userId);
         
         await createUser(
           _studentNumberController.text.trim(),
@@ -66,13 +70,11 @@ class _RegisterNewState extends State<RegisterScreen> {
           userId
         );
 
-        print("NEW USER UIID::: $userId");
-      
-        
+
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const StudentScreen())
+          MaterialPageRoute(builder: (context) => const ScheduleScreen())
         );
 
 
