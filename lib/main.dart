@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -10,6 +13,11 @@ void main() async{
     url: "https://vuphmshlifryuczfphoz.supabase.co",
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1cGhtc2hsaWZyeXVjemZwaG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc2NTUzNDcsImV4cCI6MjA0MzIzMTM0N30.jcGi4KNAo5KNZCrT2wdbNOPy3WcCG6uWRzjVlFZ0RpA",
   );
+
+  // BOXES
+  await Hive.initFlutter();
+  boxUserId = await Hive.openBox<String>('userIdBox');
+
 
   runApp(const MyApp());
 }

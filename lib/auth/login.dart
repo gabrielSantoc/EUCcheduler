@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/register.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
@@ -39,8 +40,15 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         final User? user = res.user; // get authenticated user data object 
-        final String userId = user!.id; 
+        final String userId = user!.id;  // get user id
+
+        // After mag login, bali need ko yung UID istore sa hive, para magamit ko pang query.
+        
+        
+        boxUserId.put("userId", userId);
+
         print("USER UIID::: $userId");
+        print("USER ID IN HIVEEE::: ${boxUserId.get("userId")}");
         LoadingDialog.hideLoading(context);
 
         Navigator.push(
