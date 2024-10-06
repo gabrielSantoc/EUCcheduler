@@ -74,7 +74,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         actions: const [
           Padding(
             padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(),
+            child: CircleAvatar(
+              backgroundImage: AssetImage("assets/images/wally.jpg"),
+            ),
           ),
         ],
       ),
