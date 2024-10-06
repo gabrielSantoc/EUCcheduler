@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
+import 'package:my_schedule/model/user_model.dart';
 import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
@@ -33,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         LoadingDialog.showLoading(context);
         await Future.delayed(const Duration(seconds: 3));
-
+        
         final AuthResponse res = await supabase.auth.signInWithPassword(
           email: studentNumberController.text.toString(),
           password: passwordController.text.toString(),
@@ -42,15 +43,12 @@ class _LoginScreenState extends State<LoginScreen> {
         final User? user = res.user; // get authenticated user data object 
         final String userId = user!.id;  // get user id
 
-        // After mag login, bali need ko yung UID istore sa hive, para magamit ko pang query.
-        
-        
-        boxUserId.put("userId", userId);
-
         print("USER UIID::: $userId");
-        print("USER ID IN HIVEEE::: ${boxUserId.get("userId")}");
-        LoadingDialog.hideLoading(context);
+        print("USER ID IN HIVEEE::: ${boxUserCredentials.get("userId")}"); 
+        boxUserCredentials.put("userId", userId);
 
+        LoadingDialog.hideLoading(context);
+        
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ScheduleScreen())
@@ -192,8 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 25),
                         
                     MyButton(
-                      onTap: () {
-                       
+                      onTap: () async{
                         login();
                       },
                       buttonName: "Login",

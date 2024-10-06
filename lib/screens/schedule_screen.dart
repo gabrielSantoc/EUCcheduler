@@ -22,7 +22,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   int selectedDay = DateTime.now().weekday % 7;
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
-
+  
 
   @override
   void dispose() {
@@ -39,10 +39,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   // So need ko gumawa dito ng query para makuha yung mga credential ng specific user na nag login, gagamitin ko yung user id na nilagay ko sa hive
   UserModel? userInfo; // Bali laman nito yung credentials nung user na ni query, 
   void getCredentials() async{
-    final userCredentials =  await Supabase.instance.client
+    final userCredentials =  
+    await Supabase.instance.client
     .from('tbl_users')
     .select()
-    .eq('auth_id', boxUserId.get('userId'));
+    .eq('auth_id', boxUserCredentials.get('userId'));
     print("USER CREDENTIALS ::: $userCredentials");
 
     for(var data in userCredentials) {
@@ -55,9 +56,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         userType: data['user_type']
       );
     }
-    setState(() {});
+
+    await boxUserCredentials.put("section", userInfo!.section);
+    print("SECTIONNNN :::: ${boxUserCredentials.get("section")}");
+    setState(() {
+    });
   } 
-  
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +84,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -196,12 +201,14 @@ class _ScheduleListState extends State<ScheduleList> {
   Map<int, bool> newAnnouncementsMap = {};
   late Box<String> announcementsBox;
   Map<int, String> latestAnnouncementTimes = {};
+  
+  
 
   @override
   void initState() {
     super.initState();
     initHive();
-    schedFuture = fetchSched();
+    fetchSched();
   }
 
   void initHive() async {
@@ -211,15 +218,16 @@ class _ScheduleListState extends State<ScheduleList> {
   }
 
   Future<void> loadData() async {
-    schedFuture = fetchSched();
+    fetchSched();
     await checkForNewAnnouncements();
     setState(() {});
   }
 
-  Future<List<SchedModel>> fetchSched() async {
-    try {
+  Future<List<SchedModel>> fetchSched() async { // FETCH SCHEDULES DEPENDING ON SECTION
 
-      final response = await supabase.from('tbl_schedule').select().eq('section', 'BSHM-2B');
+    try {
+      
+      final response = await supabase.from('tbl_schedule').select().eq('section', boxUserCredentials.get("section"));
       return SchedModel.jsonToList(response);
 
     } catch (e) {
@@ -268,7 +276,7 @@ class _ScheduleListState extends State<ScheduleList> {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
     final scheduleEndTime = _parseTimeString(endTime, now);
-    final lowerBound = scheduleStartTime.subtract(Duration(minutes: 1));
+    final lowerBound = scheduleStartTime.subtract(const Duration(minutes: 1));
     final upperBound = scheduleEndTime;
     return now.isAfter(lowerBound) && now.isBefore(upperBound);
   }
@@ -298,8 +306,9 @@ class _ScheduleListState extends State<ScheduleList> {
     return RefreshIndicator(
       onRefresh: loadData,
       child: FutureBuilder<List<SchedModel>>(
-        future: schedFuture,
+        future: fetchSched(),
         builder: (context, snapshot) {
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               children: [
@@ -340,13 +349,14 @@ class _ScheduleListState extends State<ScheduleList> {
             controller: widget.scrollController,
             itemCount: filteredSchedules.length,
             itemBuilder: (context, index) {
+
               var schedule = filteredSchedules[index];
               bool isCurrentTime = checkIfCurrentTime(
                 schedule.startTime,
                 schedule.endTime,
               );
-              bool hasNewAnnouncement =
-                  newAnnouncementsMap[schedule.schedId] ?? false;
+
+              bool hasNewAnnouncement = newAnnouncementsMap[schedule.schedId] ?? false;
 
               return ScheduleListItem(
                 schedule: schedule,
@@ -375,3 +385,5 @@ class _ScheduleListState extends State<ScheduleList> {
     );
   }
 }
+
+

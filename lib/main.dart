@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_schedule/auth/auth.dart';
 import 'package:my_schedule/box/boxes.dart';
@@ -16,8 +15,7 @@ void main() async{
 
   // BOXES
   await Hive.initFlutter();
-  boxUserId = await Hive.openBox<String>('userIdBox');
-
+  boxUserCredentials = await Hive.openBox<String>('userIdBox');
 
   runApp(const MyApp());
 }

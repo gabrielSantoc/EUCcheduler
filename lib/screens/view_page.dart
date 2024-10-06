@@ -11,7 +11,7 @@ class ViewPage extends StatefulWidget {
   final String subjectName;
   final int schedId;
 
-  ViewPage({
+  const ViewPage({
     required this.startTime,
     required this.endTime,
     required this.profName,

@@ -15,8 +15,8 @@ class ScheduleListItem extends StatelessWidget {
     required this.isCurrentTime,
     required this.hasNewAnnouncement,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,7 @@ class ScheduleListItem extends StatelessWidget {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              schedule.profName!,
+                              schedule.profName,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: isCurrentTime ? Colors.white : Colors.black,
