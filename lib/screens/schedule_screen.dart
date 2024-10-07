@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/model/schedule_model.dart';
 import 'package:my_schedule/model/user_model.dart';
@@ -37,8 +38,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   // So need ko gumawa dito ng query para makuha yung mga credential ng specific user na nag login, gagamitin ko yung user id na nilagay ko sa hive
-  UserModel?
-      userInfo; // Bali laman nito yung credentials nung user na ni query,
+  UserModel? userInfo; // Bali laman nito yung credentials nung user na ni query,
   void getCredentials() async {
     final userCredentials = await Supabase.instance.client
         .from('tbl_users')
@@ -48,12 +48,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
     for (var data in userCredentials) {
       userInfo = UserModel(
-          firstName: data['first_name'],
-          lastName: data['last_name'],
-          section: data['section'],
-          email: data['email'],
-          birthday: data['birthday'],
-          userType: data['user_type']);
+        firstName: data['first_name'],
+        lastName: data['last_name'],
+        section: data['section'],
+        email: data['email'],
+        birthday: data['birthday'],
+        userType: data['user_type']
+      );
     }
 
     await boxUserCredentials.put("section", userInfo!.section);
@@ -86,39 +87,45 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                userInfo != null
-                    ? Text(
-                        "${userInfo!.firstName} ${userInfo!.lastName}",
-                        style: const TextStyle(
-                            fontSize: 30,
-                            color: WHITE,
-                            fontWeight: FontWeight.bold),
-                      )
-                    : Shimmer(
-                        child: Container(
-                        height: 40,
-                        width: 300,
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(28, 158, 158, 158),
-                            borderRadius: BorderRadius.circular(10)),
-                      )),
-                      SizedBox(height: 6,),
-                userInfo != null
-                    ? Text(
-                        "${userInfo!.section}",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: WHITE,
-                        ),
-                      )
-                    : Shimmer(
-                        child: Container(
-                        height: 30,
-                        width: 100,
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(26, 158, 158, 158),
-                            borderRadius: BorderRadius.circular(10)),
-                      )),
+                userInfo != null ? Text(
+                  "${userInfo!.firstName} ${userInfo!.lastName}",
+                  style: const TextStyle(
+                    fontSize: 30,
+                    color: WHITE,
+                    fontWeight: FontWeight.bold
+                  ),
+                )
+
+                : Shimmer(
+                  child: Container(
+                    height: 40,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(28, 158, 158, 158),
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                  )
+                ),
+
+                const SizedBox(height: 6),
+
+                userInfo != null ? Text(
+                  "${userInfo!.section}",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: WHITE,
+                  ),
+                )
+              : Shimmer(
+                  child: Container(
+                    height: 30,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(26, 158, 158, 158),
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                  )
+                ),
               ],
             ),
           ),
@@ -126,8 +133,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25)),
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25)
+                ),
                 color: Colors.white,
               ),
               child: Column(
@@ -135,7 +143,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 10),
+                      vertical: 14, horizontal: 10
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: days.asMap().entries.map((entry) {
@@ -165,7 +174,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                       color: selectedDay == index
                                           ? Colors.white
                                           : Colors.black,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold
+                                  ),
                                 ),
                               ),
                             ),
@@ -232,6 +242,7 @@ class _ScheduleListState extends State<ScheduleList> {
   Future<void> loadData() async {
     schedFuture = fetchSched();
     await checkForNewAnnouncements();
+    fetchSched();
     setState(() {});
   }
 
@@ -241,13 +252,16 @@ class _ScheduleListState extends State<ScheduleList> {
     section = boxUserCredentials.get("section");
 
     try {
-      final response =
-          await supabase.from('tbl_schedule').select().eq('section', section);
+      
+      final response = await supabase.from('tbl_schedule').select().eq('section', section);
+      
       return SchedModel.jsonToList(response);
     } catch (e) {
       print('Error fetching schedules: $e');
       return [];
+
     }
+
   }
 
   Future<void> waitForSection() async {
@@ -267,8 +281,7 @@ class _ScheduleListState extends State<ScheduleList> {
       String createdAt = announcement['created_at'];
 
       // Store the latest created_at for each schedule
-      if (!latestAnnouncementTimes.containsKey(schedId) ||
-          createdAt.compareTo(latestAnnouncementTimes[schedId]!) > 0) {
+      if (!latestAnnouncementTimes.containsKey(schedId) || createdAt.compareTo(latestAnnouncementTimes[schedId]!) > 0) {
         latestAnnouncementTimes[schedId] = createdAt;
       }
 
@@ -291,13 +304,21 @@ class _ScheduleListState extends State<ScheduleList> {
     }
   }
 
-  bool checkIfCurrentTime(String startTime, String endTime) {
+
+  
+  bool checkIfCurrentTime(String startTime, String endTime, String dayOfWeek) {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
     final scheduleEndTime = _parseTimeString(endTime, now);
     final lowerBound = scheduleStartTime.subtract(const Duration(minutes: 1));
     final upperBound = scheduleEndTime;
-    return now.isAfter(lowerBound) && now.isBefore(upperBound);
+
+    print("TODAY DAY ${DateFormat('EEEE').format(now).toString().toLowerCase()}");
+    var currentDayName = DateFormat('EEEE').format(now).toString().toLowerCase();
+
+    return now.isAfter(lowerBound) && now.isBefore(upperBound) && currentDayName == dayOfWeek;
+
+
   }
 
   DateTime _parseTimeString(String timeString, DateTime currentDate) {
@@ -322,11 +343,13 @@ class _ScheduleListState extends State<ScheduleList> {
 
   @override
   Widget build(BuildContext context) {
+    
     return RefreshIndicator(
       onRefresh: loadData,
       child: FutureBuilder<List<SchedModel>>(
         future: schedFuture,
         builder: (context, snapshot) {
+          
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               children: [
@@ -360,22 +383,25 @@ class _ScheduleListState extends State<ScheduleList> {
             controller: widget.scrollController,
             itemCount: filteredSchedules.length,
             itemBuilder: (context, index) {
+              
               var schedule = filteredSchedules[index];
               bool isCurrentTime = checkIfCurrentTime(
                 schedule.startTime,
                 schedule.endTime,
-              );
+                schedule.dayOfWeek
 
-              bool hasNewAnnouncement =
-                  newAnnouncementsMap[schedule.schedId] ?? false;
+              );
+              print("DAY OF WEEEEK :::: ${schedule.dayOfWeek}");
+              bool hasNewAnnouncement = newAnnouncementsMap[schedule.schedId] ?? false;
 
               return ScheduleListItem(
                 schedule: schedule,
                 isCurrentTime: isCurrentTime,
                 hasNewAnnouncement: hasNewAnnouncement,
                 onTap: () {
-                  updateLastViewedTime(schedule
-                      .schedId); //only updates hive when sched is tapped
+                  updateLastViewedTime(
+                    schedule.schedId
+                  ); //only updates hive when sched is tapped
                   Navigator.push(
                     context,
                     MaterialPageRoute(
