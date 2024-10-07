@@ -12,6 +12,8 @@ void main() async{
     url: "***REMOVED***",
     anonKey: "***REMOVED***",
   );
+  await Hive.initFlutter();
+
 
   // BOXES
   await Hive.initFlutter();
