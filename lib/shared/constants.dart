@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:my_schedule/auth/auth.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 const MAROON = Color(0xFF862349);
 const WHITE = Color(0xFFFFFFFF);
@@ -56,7 +59,49 @@ class LoadingDialog {
 }
 
 class DrawerClass extends StatelessWidget {
-  const DrawerClass({super.key});
+  final String? profileImageUrl;
+  final VoidCallback onProfileImageChanged;
+
+  const DrawerClass({
+    Key? key, 
+    required this.profileImageUrl,
+    required this.onProfileImageChanged,
+  }) : super(key: key);
+
+  Future<void> pickAndUploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      final fileName = '${boxUserCredentials.get('userId')}_${path.basename(file.path)}';
+
+      // Delete existing profile picture if there's one
+      String? oldFilePath = boxUserCredentials.get("filePath");
+      if (oldFilePath != null) {
+        await Supabase.instance.client.storage
+            .from('profile_pictures')
+            .remove([oldFilePath]);
+      }
+
+
+      // Upload new image
+      await Supabase.instance.client.storage
+          .from('profile_pictures')
+          .upload(fileName, file);
+          
+      // Update file path in tbl_users
+      await Supabase.instance.client.from('tbl_users').update({
+        'file_path': fileName,
+      }).eq('auth_id', boxUserCredentials.get('userId'));
+
+      // Update local storage
+      await boxUserCredentials.put("filePath", fileName);
+      
+      // Notify parent to reload profile image
+      onProfileImageChanged();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +109,32 @@ class DrawerClass extends StatelessWidget {
       child: ListView(
         children: [
           DrawerHeader(
-            child: Image.asset('assets/images/emoji.png'),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!)
+                      : const AssetImage('assets/images/placeholder.png') as ImageProvider,
+                ),
+                Positioned(
+                  right: 80,
+                  bottom: 10,
+                  child: GestureDetector(
+                    onTap: pickAndUploadImage,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: MAROON,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white, size: 20),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.info),
@@ -77,14 +147,14 @@ class DrawerClass extends StatelessWidget {
             onTap: () {},
           ),
           ListTile(
-            leading: const Icon(Icons.logout_outlined  ),
+            leading: const Icon(Icons.logout_outlined),
             title: const Text('Sign Out'),
-            onTap: () async{
+            onTap: () async {
               await supabase.auth.signOut();
               boxUserCredentials.clear();
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AuthScreen())
+                MaterialPageRoute(builder: (context) => const AuthScreen()),
               );
             },
           ),
