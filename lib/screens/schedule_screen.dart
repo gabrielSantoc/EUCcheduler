@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:my_schedule/auth/auth.dart';
-import 'package:my_schedule/main.dart';
+import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/model/schedule_model.dart';
+import 'package:my_schedule/model/user_model.dart';
 import 'package:my_schedule/screens/view_page.dart';
 import 'package:my_schedule/shared/constants.dart';
+import 'package:my_schedule/shared/schedule_list_item.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:badges/badges.dart' as badges;
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -28,6 +31,37 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   @override
+  void initState() {
+    getCredentials();
+    super.initState();
+  }
+
+  // So need ko gumawa dito ng query para makuha yung mga credential ng specific user na nag login, gagamitin ko yung user id na nilagay ko sa hive
+  UserModel?
+      userInfo; // Bali laman nito yung credentials nung user na ni query,
+  void getCredentials() async {
+    final userCredentials = await Supabase.instance.client
+        .from('tbl_users')
+        .select()
+        .eq('auth_id', boxUserCredentials.get('userId'));
+    print("USER CREDENTIALS ::: $userCredentials");
+
+    for (var data in userCredentials) {
+      userInfo = UserModel(
+          firstName: data['first_name'],
+          lastName: data['last_name'],
+          section: data['section'],
+          email: data['email'],
+          birthday: data['birthday'],
+          userType: data['user_type']);
+    }
+
+    await boxUserCredentials.put("section", userInfo!.section);
+    print("SECTIONNNN :::: ${boxUserCredentials.get("section")}");
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MAROON,
@@ -37,32 +71,54 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         actions: const [
           Padding(
             padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(),
+            child: CircleAvatar(
+              backgroundImage: AssetImage("assets/images/wally.jpg"),
+            ),
           ),
         ],
       ),
       drawer: const DrawerClass(),
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(15.0),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Juan Dela Cruztzy",
-                  style: TextStyle(
-                      fontSize: 30, color: WHITE, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "BSCS-4",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: WHITE,
-                  ),
-                ),
+                userInfo != null
+                    ? Text(
+                        "${userInfo!.firstName} ${userInfo!.lastName}",
+                        style: const TextStyle(
+                            fontSize: 30,
+                            color: WHITE,
+                            fontWeight: FontWeight.bold),
+                      )
+                    : Shimmer(
+                        child: Container(
+                        height: 40,
+                        width: 300,
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(28, 158, 158, 158),
+                            borderRadius: BorderRadius.circular(10)),
+                      )),
+                      SizedBox(height: 6,),
+                userInfo != null
+                    ? Text(
+                        "${userInfo!.section}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: WHITE,
+                        ),
+                      )
+                    : Shimmer(
+                        child: Container(
+                        height: 30,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(26, 158, 158, 158),
+                            borderRadius: BorderRadius.circular(10)),
+                      )),
               ],
             ),
           ),
@@ -145,7 +201,8 @@ class ScheduleList extends StatefulWidget {
   final int selectedDay;
   final ScrollController scrollController;
 
-  const ScheduleList({super.key, required this.selectedDay, required this.scrollController});
+  const ScheduleList(
+      {super.key, required this.selectedDay, required this.scrollController});
 
   @override
   State<ScheduleList> createState() => _ScheduleListState();
@@ -157,6 +214,7 @@ class _ScheduleListState extends State<ScheduleList> {
   Map<int, bool> newAnnouncementsMap = {};
   late Box<String> announcementsBox;
   Map<int, String> latestAnnouncementTimes = {};
+  late String section = boxUserCredentials.get("section");
 
   @override
   void initState() {
@@ -178,13 +236,23 @@ class _ScheduleListState extends State<ScheduleList> {
   }
 
   Future<List<SchedModel>> fetchSched() async {
-    try {
+    // If section is not provided, wait for it to be available in Hive
+    await waitForSection();
+    section = boxUserCredentials.get("section");
 
-      final response = await supabase.from('tbl_schedule').select().eq('section', 'BSHM-2B');
+    try {
+      final response =
+          await supabase.from('tbl_schedule').select().eq('section', section);
       return SchedModel.jsonToList(response);
     } catch (e) {
       print('Error fetching schedules: $e');
       return [];
+    }
+  }
+
+  Future<void> waitForSection() async {
+    while (boxUserCredentials.get("section") == null) {
+      await Future.delayed(const Duration(milliseconds: 100));
     }
   }
 
@@ -199,7 +267,8 @@ class _ScheduleListState extends State<ScheduleList> {
       String createdAt = announcement['created_at'];
 
       // Store the latest created_at for each schedule
-      if (!latestAnnouncementTimes.containsKey(schedId) || createdAt.compareTo(latestAnnouncementTimes[schedId]!) > 0) {
+      if (!latestAnnouncementTimes.containsKey(schedId) ||
+          createdAt.compareTo(latestAnnouncementTimes[schedId]!) > 0) {
         latestAnnouncementTimes[schedId] = createdAt;
       }
 
@@ -226,7 +295,7 @@ class _ScheduleListState extends State<ScheduleList> {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
     final scheduleEndTime = _parseTimeString(endTime, now);
-    final lowerBound = scheduleStartTime.subtract(Duration(minutes: 1));
+    final lowerBound = scheduleStartTime.subtract(const Duration(minutes: 1));
     final upperBound = scheduleEndTime;
     return now.isAfter(lowerBound) && now.isBefore(upperBound);
   }
@@ -261,15 +330,15 @@ class _ScheduleListState extends State<ScheduleList> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               children: [
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Center(
                   child: LoadingAnimationWidget.staggeredDotsWave(
                     color: MAROON,
                     size: 50,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "Just a moment, retrieving schedule...",
                   style: TextStyle(color: GRAY, fontSize: 15),
                 )
@@ -278,7 +347,7 @@ class _ScheduleListState extends State<ScheduleList> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No schedules available'));
+            return const Center(child: Text('No schedules available'));
           }
 
           List<SchedModel> allSched = snapshot.data!;
@@ -287,7 +356,7 @@ class _ScheduleListState extends State<ScheduleList> {
               .toList();
 
           return ListView.builder(
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             controller: widget.scrollController,
             itemCount: filteredSchedules.length,
             itemBuilder: (context, index) {
@@ -296,6 +365,7 @@ class _ScheduleListState extends State<ScheduleList> {
                 schedule.startTime,
                 schedule.endTime,
               );
+
               bool hasNewAnnouncement =
                   newAnnouncementsMap[schedule.schedId] ?? false;
 
@@ -304,7 +374,8 @@ class _ScheduleListState extends State<ScheduleList> {
                 isCurrentTime: isCurrentTime,
                 hasNewAnnouncement: hasNewAnnouncement,
                 onTap: () {
-                  updateLastViewedTime(schedule.schedId);//only updates hive when sched is tapped
+                  updateLastViewedTime(schedule
+                      .schedId); //only updates hive when sched is tapped
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -322,127 +393,6 @@ class _ScheduleListState extends State<ScheduleList> {
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class ScheduleListItem extends StatelessWidget {
-  final SchedModel schedule;
-  final bool isCurrentTime;
-  final bool hasNewAnnouncement;
-  final VoidCallback onTap;
-
-  const ScheduleListItem({
-    required this.schedule,
-    required this.isCurrentTime,
-    required this.hasNewAnnouncement,
-    required this.onTap,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 80,
-              decoration: BoxDecoration(
-                border: Border(right: BorderSide(width: 2, color: GRAY)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  SizedBox(height: 18),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          schedule.startTime,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          schedule.endTime,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 126, 126, 126),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    splashColor: Color.fromARGB(29, 0, 0, 0),
-                    borderRadius: BorderRadius.circular(8.0),
-                    onTap: onTap,
-                    child: Ink(
-                      padding: const EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        color: isCurrentTime ? MAROON : LIGHTGRAY,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: badges.Badge(
-                        position: badges.BadgePosition.topEnd(),
-                        showBadge: hasNewAnnouncement,
-                        
-                        badgeStyle: badges.BadgeStyle(
-                          badgeColor: Colors.transparent,
-                        ),
-                        badgeContent: Icon(
-                          Icons.circle,
-                          size: 10,
-                          color: Color.fromARGB(255, 51, 231, 57),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              schedule.subject,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    isCurrentTime ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              schedule.profName!,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color:
-                                    isCurrentTime ? Colors.white : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
