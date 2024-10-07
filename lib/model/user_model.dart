@@ -7,6 +7,7 @@ class UserModel {
   late final String? section;
   late final String birthday;
   late final String userType;
+  late final String? filePath;
 
   UserModel({
     required this.firstName,
@@ -15,5 +16,6 @@ class UserModel {
     this.section,
     required this.birthday,
     required this.userType,
+    this.filePath
   });
 }

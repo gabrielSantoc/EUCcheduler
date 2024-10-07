@@ -23,6 +23,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   int selectedDay = DateTime.now().weekday % 7;
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
+  String? profileImageUrl;
 
   @override
   void dispose() {
@@ -33,13 +34,24 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
     getCredentials();
+    
     super.initState();
+  }
+
+  void loadProfileImage() {
+    String? filePath = boxUserCredentials.get("filePath");
+    if (filePath != null) {
+      profileImageUrl = Supabase.instance.client.storage
+          .from('profile_pictures')
+          .getPublicUrl(filePath);
+      setState(() {});
+    }
   }
 
   // So need ko gumawa dito ng query para makuha yung mga credential ng specific user na nag login, gagamitin ko yung user id na nilagay ko sa hive
   UserModel?
       userInfo; // Bali laman nito yung credentials nung user na ni query,
-  void getCredentials() async {
+  Future<void> getCredentials() async {
     final userCredentials = await Supabase.instance.client
         .from('tbl_users')
         .select()
@@ -53,10 +65,12 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           section: data['section'],
           email: data['email'],
           birthday: data['birthday'],
-          userType: data['user_type']);
+          userType: data['user_type'],
+          filePath: data['file_path']);
     }
-
+    await boxUserCredentials.put("filePath", userInfo!.filePath);
     await boxUserCredentials.put("section", userInfo!.section);
+    loadProfileImage();
     print("SECTIONNNN :::: ${boxUserCredentials.get("section")}");
     setState(() {});
   }
@@ -68,16 +82,21 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       appBar: AppBar(
         backgroundColor: MAROON,
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: const [
+        actions:  [
           Padding(
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundImage: AssetImage("assets/images/wally.jpg"),
+              backgroundImage:  profileImageUrl != null
+                  ? NetworkImage(profileImageUrl!)
+                  : AssetImage('assets/images/placeholder.png') as ImageProvider,
             ),
           ),
         ],
       ),
-      drawer: const DrawerClass(),
+      drawer: DrawerClass(
+        profileImageUrl: profileImageUrl,
+        onProfileImageChanged: loadProfileImage,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -102,7 +121,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                             color: Color.fromARGB(28, 158, 158, 158),
                             borderRadius: BorderRadius.circular(10)),
                       )),
-                      SizedBox(height: 6,),
+                SizedBox(
+                  height: 6,
+                ),
                 userInfo != null
                     ? Text(
                         "${userInfo!.section}",
