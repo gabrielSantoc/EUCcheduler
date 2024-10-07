@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/main.dart';
 import 'package:my_schedule/model/schedule_model.dart';
 import 'package:my_schedule/screens/view_page.dart';
 import 'package:my_schedule/shared/constants.dart';
@@ -11,10 +13,10 @@ class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
 
   @override
-  _ScheduleScreenState createState() => _ScheduleScreenState();
+  State<ScheduleScreen> createState() => ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends State<ScheduleScreen> {
+class ScheduleScreenState extends State<ScheduleScreen> {
   int selectedDay = DateTime.now().weekday % 7;
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
@@ -31,6 +33,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       backgroundColor: MAROON,
       appBar: AppBar(
         backgroundColor: MAROON,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: const [
           Padding(
             padding: EdgeInsets.all(8.0),
@@ -38,23 +41,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              child: Text('Menu'),
-            ),
-            ListTile(
-              title: const Text('Option 1'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: const Text('Option 2'),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: const DrawerClass(),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -80,7 +68,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25),
                     topRight: Radius.circular(25)),
@@ -107,7 +95,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             width: 50,
                             height: 60,
                             child: Container(
-                              margin: EdgeInsets.all(3),
+                              margin: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 color:
@@ -130,8 +118,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       }).toList(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 45),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 45),
                     child: Text(
                       "Time            Course",
                       style: TextStyle(color: GRAY),
@@ -157,7 +145,7 @@ class ScheduleList extends StatefulWidget {
   final int selectedDay;
   final ScrollController scrollController;
 
-  ScheduleList({required this.selectedDay, required this.scrollController});
+  const ScheduleList({super.key, required this.selectedDay, required this.scrollController});
 
   @override
   State<ScheduleList> createState() => _ScheduleListState();
@@ -191,8 +179,8 @@ class _ScheduleListState extends State<ScheduleList> {
 
   Future<List<SchedModel>> fetchSched() async {
     try {
-      final response =
-          await supabase.from('tbl_schedule').select().eq('section', 'BSHM-2B');
+
+      final response = await supabase.from('tbl_schedule').select().eq('section', 'BSHM-2B');
       return SchedModel.jsonToList(response);
     } catch (e) {
       print('Error fetching schedules: $e');
@@ -211,8 +199,7 @@ class _ScheduleListState extends State<ScheduleList> {
       String createdAt = announcement['created_at'];
 
       // Store the latest created_at for each schedule
-      if (!latestAnnouncementTimes.containsKey(schedId) ||
-          createdAt.compareTo(latestAnnouncementTimes[schedId]!) > 0) {
+      if (!latestAnnouncementTimes.containsKey(schedId) || createdAt.compareTo(latestAnnouncementTimes[schedId]!) > 0) {
         latestAnnouncementTimes[schedId] = createdAt;
       }
 
@@ -234,6 +221,7 @@ class _ScheduleListState extends State<ScheduleList> {
       });
     }
   }
+
   bool checkIfCurrentTime(String startTime, String endTime) {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
