@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
-import 'package:my_schedule/model/user_model.dart';
 import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
@@ -23,6 +22,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final studentNumberController = TextEditingController();
   final passwordController = TextEditingController();
+
+  bool obscureTextFlag = true;
 
   final loginFormKey = GlobalKey<FormState>();
 
@@ -152,8 +153,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     MyTextFormField(
                       controller: passwordController,
                       hintText: "Password",
-                      obscureText: false,
+                      obscureText: obscureTextFlag,
                       validator: (value)=> Validator.of(context).validateTextField(value, "Password"),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            obscureTextFlag = !obscureTextFlag;
+                          });
+                        },
+                        child: Icon( obscureTextFlag ?Icons.visibility_off :Icons.visibility ),
+                      ),
                     ),
                 
                     const SizedBox(height: 20),
