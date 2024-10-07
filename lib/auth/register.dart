@@ -415,7 +415,20 @@ class _RegisterNewState extends State<RegisterScreen> {
                         buttonName: "Create",
                       ),
 
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 15),
+
+                      const Text(
+                        "Your initial password is your birthdate\nin this format YYYY-MM-DD",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 30),
+
+                     
                     ],
                   ),
                 ),
