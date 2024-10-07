@@ -50,11 +50,14 @@ class _StudentScreenState extends State<StudentScreen> {
 
             MyButton(
               onTap: () async{
+
                 await supabase.auth.signOut();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AuthScreen())
                 );
+                
               },
               buttonName: "Log out"
             )
