@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/model/schedule_model.dart';
 import 'package:my_schedule/model/user_model.dart';
@@ -220,8 +221,8 @@ class _ScheduleListState extends State<ScheduleList> {
   }
 
   Future<void> loadData() async {
-    fetchSched();
     await checkForNewAnnouncements();
+    fetchSched();
     setState(() {});
   }
 
@@ -229,7 +230,7 @@ class _ScheduleListState extends State<ScheduleList> {
 
     try {
       
-      final response = await supabase.from('tbl_schedule').select().eq('section', boxUserCredentials.get("section"));
+      final response =await supabase.from('tbl_schedule').select().eq('section', boxUserCredentials.get("section"));
       return SchedModel.jsonToList(response);
 
     } catch (e) {
@@ -238,6 +239,7 @@ class _ScheduleListState extends State<ScheduleList> {
       return [];
 
     }
+
   }
 
   Future<void> checkForNewAnnouncements() async {
@@ -274,13 +276,21 @@ class _ScheduleListState extends State<ScheduleList> {
     }
   }
 
-  bool checkIfCurrentTime(String startTime, String endTime) {
+
+  
+  bool checkIfCurrentTime(String startTime, String endTime, String dayOfWeek) {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
     final scheduleEndTime = _parseTimeString(endTime, now);
     final lowerBound = scheduleStartTime.subtract(const Duration(minutes: 1));
     final upperBound = scheduleEndTime;
-    return now.isAfter(lowerBound) && now.isBefore(upperBound);
+
+    print("TODAY DAY ${DateFormat('EEEE').format(now).toString().toLowerCase()}");
+    var currentDayName = DateFormat('EEEE').format(now).toString().toLowerCase();
+
+    return now.isAfter(lowerBound) && now.isBefore(upperBound) && currentDayName == dayOfWeek;
+
+
   }
 
   DateTime _parseTimeString(String timeString, DateTime currentDate) {
@@ -305,12 +315,13 @@ class _ScheduleListState extends State<ScheduleList> {
 
   @override
   Widget build(BuildContext context) {
+    
     return RefreshIndicator(
       onRefresh: loadData,
       child: FutureBuilder<List<SchedModel>>(
-        future: fetchSched(),
+        future:  fetchSched(),
         builder: (context, snapshot) {
-
+          
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               children: [
@@ -351,13 +362,15 @@ class _ScheduleListState extends State<ScheduleList> {
             controller: widget.scrollController,
             itemCount: filteredSchedules.length,
             itemBuilder: (context, index) {
-
+              
               var schedule = filteredSchedules[index];
               bool isCurrentTime = checkIfCurrentTime(
                 schedule.startTime,
                 schedule.endTime,
-              );
+                schedule.dayOfWeek
 
+              );
+              print("DAY OF WEEEEK :::: ${schedule.dayOfWeek}");
               bool hasNewAnnouncement = newAnnouncementsMap[schedule.schedId] ?? false;
 
               return ScheduleListItem(
