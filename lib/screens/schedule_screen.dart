@@ -141,7 +141,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                       children: days.asMap().entries.map((entry) {
                         int index = entry.key;
                         String day = entry.value;
-                        return InkWell(
+                        return GestureDetector(
                           onTap: () {
                             setState(() {
                               selectedDay = index;
