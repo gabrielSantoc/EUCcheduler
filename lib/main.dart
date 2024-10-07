@@ -12,6 +12,8 @@ void main() async{
     url: "https://vuphmshlifryuczfphoz.supabase.co",
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1cGhtc2hsaWZyeXVjemZwaG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc2NTUzNDcsImV4cCI6MjA0MzIzMTM0N30.jcGi4KNAo5KNZCrT2wdbNOPy3WcCG6uWRzjVlFZ0RpA",
   );
+  await Hive.initFlutter();
+
 
   // BOXES
   await Hive.initFlutter();
