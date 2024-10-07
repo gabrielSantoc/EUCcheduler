@@ -6,6 +6,7 @@ class MyTextFormField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    this.suffixIcon,
     this.validator
   });
 
@@ -13,6 +14,7 @@ class MyTextFormField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +26,8 @@ class MyTextFormField extends StatelessWidget {
         obscureText: obscureText,
         validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: InputDecoration(
-          
+        decoration: InputDecoration(  
+          suffixIcon: suffixIcon,
           errorStyle: const TextStyle(
             fontSize: 11,
           ),

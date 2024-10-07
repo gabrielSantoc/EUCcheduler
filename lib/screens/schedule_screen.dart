@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/model/schedule_model.dart';
 import 'package:my_schedule/model/user_model.dart';
@@ -34,7 +35,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
     getCredentials();
-    
+
     super.initState();
   }
 
@@ -51,7 +52,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   // So need ko gumawa dito ng query para makuha yung mga credential ng specific user na nag login, gagamitin ko yung user id na nilagay ko sa hive
   UserModel?
       userInfo; // Bali laman nito yung credentials nung user na ni query,
-  Future<void> getCredentials() async {
+  void getCredentials() async {
     final userCredentials = await Supabase.instance.client
         .from('tbl_users')
         .select()
@@ -82,13 +83,14 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       appBar: AppBar(
         backgroundColor: MAROON,
         iconTheme: const IconThemeData(color: Colors.white),
-        actions:  [
+        actions: [
           Padding(
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundImage:  profileImageUrl != null
+              backgroundImage: profileImageUrl != null
                   ? NetworkImage(profileImageUrl!)
-                  : AssetImage('assets/images/placeholder.png') as ImageProvider,
+                  : AssetImage('assets/images/placeholder.png')
+                      as ImageProvider,
             ),
           ),
         ],
@@ -121,9 +123,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                             color: Color.fromARGB(28, 158, 158, 158),
                             borderRadius: BorderRadius.circular(10)),
                       )),
-                SizedBox(
-                  height: 6,
-                ),
+                const SizedBox(height: 6),
                 userInfo != null
                     ? Text(
                         "${userInfo!.section}",
@@ -253,6 +253,7 @@ class _ScheduleListState extends State<ScheduleList> {
   Future<void> loadData() async {
     schedFuture = fetchSched();
     await checkForNewAnnouncements();
+    fetchSched();
     setState(() {});
   }
 
@@ -264,6 +265,7 @@ class _ScheduleListState extends State<ScheduleList> {
     try {
       final response =
           await supabase.from('tbl_schedule').select().eq('section', section);
+
       return SchedModel.jsonToList(response);
     } catch (e) {
       print('Error fetching schedules: $e');
@@ -312,13 +314,21 @@ class _ScheduleListState extends State<ScheduleList> {
     }
   }
 
-  bool checkIfCurrentTime(String startTime, String endTime) {
+  bool checkIfCurrentTime(String startTime, String endTime, String dayOfWeek) {
     DateTime now = DateTime.now();
     final scheduleStartTime = _parseTimeString(startTime, now);
     final scheduleEndTime = _parseTimeString(endTime, now);
     final lowerBound = scheduleStartTime.subtract(const Duration(minutes: 1));
     final upperBound = scheduleEndTime;
-    return now.isAfter(lowerBound) && now.isBefore(upperBound);
+
+    print(
+        "TODAY DAY ${DateFormat('EEEE').format(now).toString().toLowerCase()}");
+    var currentDayName =
+        DateFormat('EEEE').format(now).toString().toLowerCase();
+
+    return now.isAfter(lowerBound) &&
+        now.isBefore(upperBound) &&
+        currentDayName == dayOfWeek;
   }
 
   DateTime _parseTimeString(String timeString, DateTime currentDate) {
@@ -383,10 +393,8 @@ class _ScheduleListState extends State<ScheduleList> {
             itemBuilder: (context, index) {
               var schedule = filteredSchedules[index];
               bool isCurrentTime = checkIfCurrentTime(
-                schedule.startTime,
-                schedule.endTime,
-              );
-
+                  schedule.startTime, schedule.endTime, schedule.dayOfWeek);
+              print("DAY OF WEEEEK :::: ${schedule.dayOfWeek}");
               bool hasNewAnnouncement =
                   newAnnouncementsMap[schedule.schedId] ?? false;
 
