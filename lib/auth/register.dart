@@ -5,7 +5,6 @@ import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/model/section_model.dart';
 import 'package:my_schedule/screens/schedule_screen.dart';
-import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
 import 'package:my_schedule/shared/constants.dart';
@@ -26,6 +25,7 @@ class _RegisterNewState extends State<RegisterScreen> {
   initState() {
     // TODO: implement initState
     super.initState();
+    
     getAllAvailableSections();
   }
 
@@ -39,55 +39,97 @@ class _RegisterNewState extends State<RegisterScreen> {
 
   final registerFormKey = GlobalKey<FormState>();
 
-  // FUNCTION TO CREATE A NEW ACCOUNT
-  void registerAccount () async{
+  
+  bool isStudentBonafide = false;
+
+  // Function to validate student if bonafide or not based on the enrollment records
+  // Queries the database using the student's provided credentials.
+  // If it has a result, `isStudentBonafide` will be set to true.
+  Future<void> validateStudent() async{  
+
+    try {
+      final studentToSearch = await 
+        Supabase.instance.client
+        .from('tbl_bonafide_students')
+        .select()
+        .eq('student_number', _studentNumberController.text.trim().toUpperCase())
+        .eq('first_name', _firstNameController.text.trim().toUpperCase())
+        .eq('last_name', _lastNameController.text.trim().toUpperCase());
     
+      if(studentToSearch.isNotEmpty) {
+        print("STUDENT IS BONAFIDE");
+        print("STUDENT TO SEARCH :::: ${studentToSearch}");
+        setState(() {
+          isStudentBonafide = true;
+        });
+
+      } 
+      else {
+        print("NOT BONAFIDE");
+        print(" BONAFIDE");
+        print("STUDENT TO SEARCH :::: ${studentToSearch}");
+      } 
+    } catch (e) {
+      Alert.of(context).showError("$e");
+    }
+  }
+
+  // FUNCTION TO CREATE A NEW ACCOUNT
+  void  registerAccount () async{
+    await validateStudent();
+
     if(registerFormKey.currentState!.validate()) {
 
-      try{
+      if( isStudentBonafide ) {
 
-        LoadingDialog.showLoading(context);
-        await Future.delayed(const Duration(seconds: 2));
+        try{
 
-        final AuthResponse res = await supabase.auth.signUp(
-          email: _emailController.text.trim(),
-          password: _birthDateController.text.trim(),
-        );
+          LoadingDialog.showLoading(context);
+          await Future.delayed(const Duration(seconds: 2));
 
-        final User? user = res.user; // get authenticated user data object 
-        final String userId = user!.id;  // get user id
+          final AuthResponse res = await supabase.auth.signUp(
+            email: _emailController.text.trim(),
+            password: _birthDateController.text.trim(),
+          );
 
-        print("NEW USER UIID::: $userId");
-        boxUserCredentials.put("userId", userId);
-        
-        await createUser(
-          _studentNumberController.text.trim(),
-          _firstNameController.text.trim(),
-          _lastNameController.text.trim(),
-          _sectionController.text.trim(),
-          _birthDateController.text.trim(),
-          _emailController.text.trim(), 
-          userId
-        );
+          final User? user = res.user; // get authenticated user data object 
+          final String userId = user!.id;  // get user id
 
-
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ScheduleScreen())
-        );
+          print("NEW USER UIID::: $userId");
+          boxUserCredentials.put("userId", userId);
+          
+          await createUser(
+            _studentNumberController.text.trim(),
+            _firstNameController.text.trim(),
+            _lastNameController.text.trim(),
+            _sectionController.text.trim(),
+            _birthDateController.text.trim(),
+            _emailController.text.trim(), 
+            userId
+          );
 
 
-      } on AuthException catch(e) {
-        LoadingDialog.hideLoading(context);
-        Alert.of(context).showError(e.message);
-        print("ERROR ::: ${e.code}");
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ScheduleScreen())
+          );
+
+
+        } on AuthException catch(e) {
+          LoadingDialog.hideLoading(context);
+          Alert.of(context).showError(e.message);
+          print("ERROR ::: ${e.code}");
+
+        }
+
+      } else {
+          
+        Alert.of(context).showError("Student not found, please retry");
 
       }
-    }
 
-    
-    
+    }
 
   }   
 
@@ -160,17 +202,12 @@ class _RegisterNewState extends State<RegisterScreen> {
       for(var s in _sections) {
         print("SECTION ::: $s");
       }
-     
-      
+
     } catch (e) {
-
       print("ERROR ::: $e");
-
     }
 
   }
-
-  
 
   Future<void> selectSection() async {
     // Show the Cupertino modal popup
@@ -198,7 +235,6 @@ class _RegisterNewState extends State<RegisterScreen> {
         );
       },
     );
-
   }
 
   @override
