@@ -13,11 +13,8 @@ const WHITE = Color(0xFFFFFFFF);
 const LIGHTGRAY = Color(0xFFECECEC);
 const GRAY = Color(0xFF8F8E8E);
 Widget vSpacerWidth(double width) {
-
   return SizedBox(
-
     height: width,
-
   );
 }
 
@@ -35,7 +32,6 @@ class SpacerClass extends StatelessWidget {
     );
   }
 }
-
 
 class LoadingDialog {
   static void showLoading(BuildContext context) {
@@ -63,7 +59,7 @@ class DrawerClass extends StatelessWidget {
   final VoidCallback onProfileImageChanged;
 
   const DrawerClass({
-    Key? key, 
+    Key? key,
     required this.profileImageUrl,
     required this.onProfileImageChanged,
   }) : super(key: key);
@@ -74,7 +70,8 @@ class DrawerClass extends StatelessWidget {
 
     if (pickedFile != null) {
       final file = File(pickedFile.path);
-      final fileName = '${boxUserCredentials.get('userId')}_${path.basename(file.path)}';
+      final fileName =
+          '${boxUserCredentials.get('userId')}_${path.basename(file.path)}';
 
       // Delete existing profile picture if there's one
       String? oldFilePath = boxUserCredentials.get("filePath");
@@ -84,12 +81,11 @@ class DrawerClass extends StatelessWidget {
             .remove([oldFilePath]);
       }
 
-
       // Upload new image
       await Supabase.instance.client.storage
           .from('profile_pictures')
           .upload(fileName, file);
-          
+
       // Update file path in tbl_users
       await Supabase.instance.client.from('tbl_users').update({
         'file_path': fileName,
@@ -97,7 +93,7 @@ class DrawerClass extends StatelessWidget {
 
       // Update local storage
       await boxUserCredentials.put("filePath", fileName);
-      
+
       // Notify parent to reload profile image
       onProfileImageChanged();
     }
@@ -116,7 +112,8 @@ class DrawerClass extends StatelessWidget {
                   radius: 60,
                   backgroundImage: profileImageUrl != null
                       ? NetworkImage(profileImageUrl!)
-                      : const AssetImage('assets/images/placeholder.png') as ImageProvider,
+                      : const AssetImage('assets/images/placeholder.png')
+                          as ImageProvider,
                 ),
                 Positioned(
                   right: 80,
@@ -129,7 +126,8 @@ class DrawerClass extends StatelessWidget {
                         color: MAROON,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 20),
+                      child:
+                          const Icon(Icons.add, color: Colors.white, size: 20),
                     ),
                   ),
                 ),
