@@ -25,6 +25,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   final List<String> days = ["S", "M", "T", "W", "TH", "F", "SA"];
   final ScrollController _scrollController = ScrollController();
   String? profileImageUrl;
+  
 
   @override
   void dispose() {
@@ -78,6 +79,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+        double size = screenWidth / 7.5; // This will give us 7 days with some padding
+    
+    // Ensure the size doesn't exceed a maximum value
+    size = size.clamp(40, 50).toDouble();
     return Scaffold(
       backgroundColor: MAROON,
       appBar: AppBar(
@@ -169,7 +175,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                             });
                           },
                           child: SizedBox(
-                            width: 50,
+                            width: size,
                             height: 60,
                             child: Container(
                               margin: const EdgeInsets.all(3),
@@ -182,7 +188,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                 child: Text(
                                   day,
                                   style: TextStyle(
-                                      fontSize: 19,
+                                      fontSize: size * 0.4,
                                       color: selectedDay == index
                                           ? Colors.white
                                           : Colors.black,
