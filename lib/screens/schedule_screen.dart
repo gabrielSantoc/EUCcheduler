@@ -39,7 +39,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
     super.initState();
   }
-
+  //check for filepath in hive, then use that to generate a url to get the profile
   void loadProfileImage() {
     String? filePath = boxUserCredentials.get("filePath");
     if (filePath != null) {
@@ -72,6 +72,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     }
     await boxUserCredentials.put("filePath", userInfo!.filePath);
     await boxUserCredentials.put("section", userInfo!.section);
+    //to make sure hive has content before fetching profile picture
     loadProfileImage();
     print("SECTIONNNN :::: ${boxUserCredentials.get("section")}");
     setState(() {});
@@ -212,6 +213,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                     child: ScheduleList(
                       selectedDay: selectedDay,
                       scrollController: _scrollController,
+                      refreshUserInfo: getCredentials,
                     ),
                   ),
                 ],
@@ -227,9 +229,10 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 class ScheduleList extends StatefulWidget {
   final int selectedDay;
   final ScrollController scrollController;
+  final VoidCallback refreshUserInfo;
 
   const ScheduleList(
-      {super.key, required this.selectedDay, required this.scrollController});
+      {super.key, required this.selectedDay, required this.scrollController, required this.refreshUserInfo});
 
   @override
   State<ScheduleList> createState() => _ScheduleListState();
@@ -259,6 +262,7 @@ class _ScheduleListState extends State<ScheduleList> {
   Future<void> loadData() async {
     schedFuture = fetchSched();
     await checkForNewAnnouncements();
+    widget.refreshUserInfo();
     fetchSched();
     setState(() {});
   }
