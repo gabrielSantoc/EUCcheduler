@@ -45,8 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
         final String userId = user!.id;  // get user id
 
         print("USER UIID::: $userId");
-        print("USER ID IN HIVEEE::: ${boxUserCredentials.get("userId")}"); 
         boxUserCredentials.put("userId", userId);
+        print("USER ID IN HIVEEE::: ${boxUserCredentials.get("userId")}"); 
 
         LoadingDialog.hideLoading(context);
         
