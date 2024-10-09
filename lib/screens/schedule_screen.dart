@@ -70,8 +70,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           userType: data['user_type'],
           filePath: data['file_path']);
     }
-    await boxUserCredentials.put("filePath", userInfo!.filePath);
-    await boxUserCredentials.put("section", userInfo!.section);
+    //para sure na may laman
+      if (userInfo!.filePath != null) {
+        await boxUserCredentials.put("filePath", userInfo!.filePath);
+      }
+      if (userInfo!.section != null) {
+        await boxUserCredentials.put("section", userInfo!.section);
+      }
     //to make sure hive has content before fetching profile picture
     loadProfileImage();
     print("SECTIONNNN :::: ${boxUserCredentials.get("section")}");
