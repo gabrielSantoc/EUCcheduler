@@ -62,13 +62,14 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
     for (var data in userCredentials) {
       userInfo = UserModel(
-          firstName: data['first_name'],
-          lastName: data['last_name'],
-          section: data['section'],
-          email: data['email'],
-          birthday: data['birthday'],
-          userType: data['user_type'],
-          filePath: data['file_path']);
+        firstName: data['first_name'],
+        lastName: data['last_name'],
+        section: data['section'],
+        email: data['email'],
+        birthday: data['birthday'],
+        userType: data['user_type'],
+        filePath: data['file_path']
+      );
     }
     //para sure na may laman
       if (userInfo!.filePath != null) {
@@ -97,11 +98,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
               backgroundImage: profileImageUrl != null
                   ? NetworkImage(profileImageUrl!)
-                  : AssetImage('assets/images/placeholder.png')
+                  : const AssetImage('assets/images/placeholder.png')
                       as ImageProvider,
             ),
           ),
@@ -132,7 +133,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                         height: 40,
                         width: 300,
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(28, 158, 158, 158),
+                            color: const Color.fromARGB(28, 158, 158, 158),
                             borderRadius: BorderRadius.circular(10)),
                       )),
                 const SizedBox(height: 6),
@@ -149,7 +150,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                         height: 30,
                         width: 100,
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(26, 158, 158, 158),
+                            color: const Color.fromARGB(26, 158, 158, 158),
                             borderRadius: BorderRadius.circular(10)),
                       )),
               ],
