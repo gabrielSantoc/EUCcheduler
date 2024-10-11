@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_schedule/auth/login.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
@@ -58,7 +59,7 @@ class _RegisterNewState extends State<RegisterScreen> {
     
       if(studentToSearch.isNotEmpty) {
         print("STUDENT IS BONAFIDE");
-        print("STUDENT TO SEARCH :::: ${studentToSearch}");
+        print("STUDENT TO SEARCH :::: $studentToSearch");
         setState(() {
           isStudentBonafide = true;
         });
@@ -67,7 +68,7 @@ class _RegisterNewState extends State<RegisterScreen> {
       else {
         print("NOT BONAFIDE");
         print(" BONAFIDE");
-        print("STUDENT TO SEARCH :::: ${studentToSearch}");
+        print("STUDENT TO SEARCH :::: $studentToSearch");
       } 
     } catch (e) {
       Alert.of(context).showError("$e");
@@ -164,19 +165,19 @@ class _RegisterNewState extends State<RegisterScreen> {
 
     if (picked != null) {
       birthDay = picked;
+      
+      // int year = birthDay.year;
+      // int month = birthDay.month;
+      // int day = birthDay.day;
+      // String formattedBirthDay = "$year-$month-$day"; 
+      var formattedBirthDay = DateFormat('yyyy-MM-dd');
+      _birthDateController.text = formattedBirthDay.format(birthDay);
 
-      int year = birthDay.year;
-      int month = birthDay.month;
-      int day = birthDay.day;
-
-      String formattedBirthDay = "$year-$month-$day"; 
-      _birthDateController.text = formattedBirthDay;
-
-      print('BIRTHDAYYYY $formattedBirthDay'); 
+      print('BIRTHDAYYYY ::::: ${formattedBirthDay.format(birthDay)}'); 
     }
   }
 
-
+  
 
   // Function to show the section picker
   // List of sections
