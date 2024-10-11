@@ -279,8 +279,11 @@ class _ScheduleListState extends State<ScheduleList> {
     section = boxUserCredentials.get("section");
 
     try {
-      final response =
-          await supabase.from('tbl_schedule').select().eq('section', section);
+      final response =  await supabase
+      .from('tbl_schedule')
+      .select()
+      .eq('section', section)
+      .order('start_time', ascending: true);
 
       return SchedModel.jsonToList(response);
     } catch (e) {

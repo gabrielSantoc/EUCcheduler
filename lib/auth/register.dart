@@ -354,7 +354,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                         controller: _sectionController,
                         hintText: "Section",
                         obscureText: false,
-                        validator: (value)=> Validator.of(context).validateTextField(value, "Birth Date"),
+                        validator: (value)=> Validator.of(context).validateTextField(value, "Section"),
                       ),
                       const SizedBox(height: 20),
                   
@@ -363,7 +363,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                         controller: _birthDateController,
                         hintText: "Birthdate",
                         obscureText: false,
-                        validator: (value)=> Validator.of(context).validateTextField(value, "Section"),
+                        validator: (value)=> Validator.of(context).validateTextField(value, "Birthdate"),
                       ),
                       const SizedBox(height: 20),
                       
