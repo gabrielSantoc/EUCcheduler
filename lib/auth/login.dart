@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
+import 'package:my_schedule/model/user_model.dart';
 import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/button.dart';
@@ -20,16 +21,54 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final studentNumberController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool obscureTextFlag = true;
 
   final loginFormKey = GlobalKey<FormState>();
 
+  // ANCHOR - THIS FUNCTION TEACHERS TO LOGIN INTO THE APP
+  Future<bool> validateUser() async{
+    UserModel? userInfo;
+    try {
+      final user = await 
+      Supabase.instance.client
+      .from('tbl_users')
+      .select()
+      .eq('email', emailController.text.trim());
+  
+      for (var data in user) {
+        userInfo = UserModel(
+          firstName: data['first_name'],
+          lastName: data['last_name'],
+          section: data['section'],
+          email: data['email'],
+          birthday: data['birthday'],
+          userType: data['user_type'],
+          filePath: data['file_path']
+        );
+      }
+      
+      if(userInfo!.userType == 'student') {
+        return true;
+      }
+      return false;
+
+    } catch (e) {
+
+      Alert.of(context).showError("$e");
+      return false;
+    }
+  }
+
   void login() async {
+
+    if(!await validateUser()) {
+      Alert.of(context).showError("This app is designed for STUDENTS😎 only. If you are a teacher, please use the appropriate application.🥰🥰🥰");
+    }
     
-    if(loginFormKey.currentState!.validate()) {
+    if(loginFormKey.currentState!.validate() && await validateUser()) {
 
       try {
 
@@ -37,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Future.delayed(const Duration(seconds: 3));
         
         final AuthResponse res = await supabase.auth.signInWithPassword(
-          email: studentNumberController.text.toString(),
+          email: emailController.text.toString(),
           password: passwordController.text.toString(),
         );
 
@@ -69,10 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: MAROON,
       body: SingleChildScrollView(
-        
+
         child: Column(
           children: [
         
@@ -142,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                 
                     MyTextFormField(
-                      controller: studentNumberController,
+                      controller: emailController,
                       hintText: "Email address",
                       obscureText: false,
                       validator:  Validator.of(context).validateEmail

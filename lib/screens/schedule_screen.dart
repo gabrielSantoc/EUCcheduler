@@ -95,7 +95,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       backgroundColor: MAROON,
       appBar: AppBar(
         backgroundColor: MAROON,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: WHITE),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),

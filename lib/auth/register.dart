@@ -249,7 +249,7 @@ class _RegisterNewState extends State<RegisterScreen> {
             
             // TOP WHITE CONTAINER
             Container(
-
+              
               color: MAROON,
               height: MediaQuery.of(context).size.height * 0.2, 
 
@@ -419,7 +419,7 @@ class _RegisterNewState extends State<RegisterScreen> {
                       const SizedBox(height: 15),
 
                       const Text(
-                        "Your initial password is your birthdate\nin this format YYYY-MM-DD",
+                        "Your initial password will be your birthdate\nin this format YYYY-MM-DD",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black,
