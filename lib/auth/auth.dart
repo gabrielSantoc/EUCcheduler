@@ -51,7 +51,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-
+      resizeToAvoidBottomInset: true,
       body: StreamBuilder(
         stream: supabase.auth.onAuthStateChange,
         builder: (context, snapshot) {

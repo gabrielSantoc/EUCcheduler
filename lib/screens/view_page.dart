@@ -35,6 +35,7 @@ class ViewPageState extends State<ViewPage> {
       backgroundColor: MAROON,
       appBar: AppBar(
         backgroundColor: MAROON,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
