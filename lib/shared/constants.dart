@@ -126,8 +126,7 @@ class DrawerClass extends StatelessWidget {
                         color: MAROON,
                         shape: BoxShape.circle,
                       ),
-                      child:
-                          const Icon(Icons.add, color: Colors.white, size: 20),
+                      child: const Icon(Icons.add, color: Colors.white, size: 20),
                     ),
                   ),
                 ),
