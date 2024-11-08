@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_schedule/auth/auth.dart';
 import 'package:my_schedule/box/boxes.dart';
+import 'package:my_schedule/screens/schedule_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -29,9 +30,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  const MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:  AuthScreen()
+      home:  AuthScreen(),
     );
   }
 }

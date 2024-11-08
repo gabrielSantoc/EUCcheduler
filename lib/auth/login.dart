@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_schedule/auth/forgot_password.dart';
 import 'package:my_schedule/auth/register.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
@@ -64,11 +65,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
 
-    if(!await validateUser()) {
-      Alert.of(context).showError("This app is designed for STUDENTS😎 only. If you are a teacher, please use the appropriate application.🥰🥰🥰");
-    }
     
     if(loginFormKey.currentState!.validate() && await validateUser()) {
+
+      if(!await validateUser()) {
+        Alert.of(context).showError("This app is designed for STUDENTS😎 only. If you are a teacher, please use the appropriate application.🥰🥰🥰");
+      }
 
       try {
 
@@ -89,11 +91,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
         LoadingDialog.hideLoading(context);
         
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const ScheduleScreen())
+          MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+          (route) => false,
         );
-
 
       } on AuthException catch(e) {
         
@@ -243,8 +245,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       buttonName: "Login",
                     ),
-                        
-                    const SizedBox(height: 15),
+                    
+                    const SizedBox(height: 5),
+
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ForgotPasswordPage())
+                      ),
+                      child: const Text(
+                        "Forgot Password ?",
+                        style: TextStyle(
+                          color: MAROON,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
                         
                     const Text(
                       "Your initial password is your birthdate\nin this format YYYY-MM-DD",
@@ -254,7 +272,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    
+                    const SizedBox(height: 15),
+
                   ],
                 ),
               ),

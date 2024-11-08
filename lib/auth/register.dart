@@ -109,11 +109,10 @@ class _RegisterNewState extends State<RegisterScreen> {
             userId
           );
 
-
-
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const ScheduleScreen())
+            MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+            (route) => false,
           );
 
 
@@ -165,11 +164,6 @@ class _RegisterNewState extends State<RegisterScreen> {
 
     if (picked != null) {
       birthDay = picked;
-      
-      // int year = birthDay.year;
-      // int month = birthDay.month;
-      // int day = birthDay.day;
-      // String formattedBirthDay = "$year-$month-$day"; 
       var formattedBirthDay = DateFormat('yyyy-MM-dd');
       _birthDateController.text = formattedBirthDay.format(birthDay);
 
@@ -308,11 +302,15 @@ class _RegisterNewState extends State<RegisterScreen> {
                         controller: _studentNumberController,
                         hintText: "Student Number",
                         obscureText: false,
-                        validator: Validator.of(context).validateStudentNumber,
+                        validator: (value)=> Validator.of(context).validateWithRegex(
+                          value,
+                          'ID number cannot found',
+                          'Student Number',
+                          RegExp(r'^A\d{2}-\d{4}$'),
+                        ),
                       ),
                   
                       const SizedBox(height: 20),
-                  
                   
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -379,7 +377,11 @@ class _RegisterNewState extends State<RegisterScreen> {
                         controller: _confirmEmailController,
                         hintText: "Confirm email address",
                         obscureText: false,
-                        validator: (value)=> Validator.of(context).validateConfirmEmail(value, _emailController.text)
+                        validator: (value)=> Validator.of(context).validateConfirmation(
+                          value, 
+                          _emailController.text, 
+                          "Confirm Email"
+                        )
                       ),
                       const SizedBox(height: 20),
                   

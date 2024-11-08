@@ -60,31 +60,9 @@ class MyButton extends StatelessWidget {
             )
           )
         ),
-        child: Text(buttonName, style: const TextStyle(fontSize: 18)),
+        child: Text(buttonName, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         
       ),
     );
   }
 }
-
-//  Container(
-//         padding: 
-//         margin: const EdgeInsets.symmetric(horizontal: 30),
-//         decoration: const BoxDecoration(
-//           borderRadius: BorderRadius.all(Radius.circular(10)),
-//           color: 
-//         ),
-//         child: Center(
-//           child: Text(
-//             buttonName,
-//             style: const TextStyle(
-//               fontSize: 15,
-//               fontWeight: FontWeight.w700,
-//               color: Colors.white,
-//             ),
-//           ),
-//         ),
-//       ),
-
-
-
