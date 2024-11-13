@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:my_schedule/auth/auth.dart';
+import 'package:my_schedule/auth/change_password.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 import 'package:image_picker/image_picker.dart';
@@ -132,6 +133,13 @@ class DrawerClass extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.lock),
+            title: const Text('Change Password'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePasswordScreen()));
+            },
           ),
           ListTile(
             leading: const Icon(Icons.info),

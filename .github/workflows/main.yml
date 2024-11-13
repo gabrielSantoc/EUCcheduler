@@ -51,6 +51,3 @@ jobs:  # Telling what jobs we need to happen
         artifacts: "build/app/outputs/flutter-apk/app-release.apk"
         tag: v${{ github.run_number }}
         token: ${{ secrets.TOKEN }}
-
-# Test github actions
-# Test github actions
