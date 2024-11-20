@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final loginFormKey = GlobalKey<FormState>();
 
-  // ANCHOR - THIS FUNCTION TEACHERS TO LOGIN INTO THE APP
+  // ANCHOR - THIS FUNCTION PREVENT TEACHERS TO LOGIN INTO THE APP
   Future<bool> validateUser() async{
     UserModel? userInfo;
     try {
@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
       
-      if(userInfo!.userType == 'student') {
+      if(userInfo!.userType == 'student' || userInfo!.userType == 'admin') {
         return true;
       }
       return false;
@@ -64,7 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() async {
-
     
     if(loginFormKey.currentState!.validate() && await validateUser()) {
 
@@ -86,16 +85,16 @@ class _LoginScreenState extends State<LoginScreen> {
         final String userId = user!.id;  // get user id
 
         print("USER UIID::: $userId");
-        boxUserCredentials.put("userId", userId);
         print("USER ID IN HIVEEE::: ${boxUserCredentials.get("userId")}"); 
+        boxUserCredentials.put("userId", userId);
 
         LoadingDialog.hideLoading(context);
         
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ScheduleScreen()),
-          (route) => false,
+          MaterialPageRoute(builder: (context) => const ScheduleScreen())
         );
+
 
       } on AuthException catch(e) {
         
@@ -110,19 +109,18 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      // resizeToAvoidBottomInset: false,
       backgroundColor: MAROON,
       body: SingleChildScrollView(
-
+        
         child: Column(
           children: [
-        
+            
             Container(
-              
+
               // TOP MAROON CONTAINER
               color: MAROON,
               height: MediaQuery.of(context).size.height * 0.5, 
-
 
               child: const Column(
 
@@ -131,9 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
         
                   Text(
-                    "Welcome back!",
+                    "EUCschedule",
                     style: TextStyle(
-                      fontSize: 45,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -144,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     "Login in to Continue!",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 15,
                       fontWeight: FontWeight.normal,
                       color: Colors.white,
                     ),
@@ -261,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
+                        
                     const SizedBox(height: 5),
                         
                     const Text(
@@ -272,8 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 15),
-
+                    
                   ],
                 ),
               ),
