@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:my_schedule/auth/forgot_password.dart';
 import 'package:my_schedule/auth/register.dart';
@@ -54,6 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if(userInfo!.userType == 'student' || userInfo!.userType == 'admin') {
         return true;
       }
+
+      Alert.of(context).showError("This app is designed for STUDENTS😎 only. If you are a teacher, please use the appropriate application.🥰🥰🥰");
       return false;
 
     } catch (e) {
@@ -66,10 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void login() async {
     
     if(loginFormKey.currentState!.validate() && await validateUser()) {
-
-      if(!await validateUser()) {
-        Alert.of(context).showError("This app is designed for STUDENTS😎 only. If you are a teacher, please use the appropriate application.🥰🥰🥰");
-      }
 
       try {
 
