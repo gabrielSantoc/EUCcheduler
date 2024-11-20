@@ -95,15 +95,18 @@ class ScheduleScreenState extends State<ScheduleScreen> {
       appBar: AppBar(
         backgroundColor: MAROON,
         iconTheme: const IconThemeData(color: WHITE),
-        actions: [
+        actions: const [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundImage: profileImageUrl != null
-                  ? NetworkImage(profileImageUrl!)
-                  : const AssetImage('assets/images/placeholder.png')
-                      as ImageProvider,
+              backgroundImage: AssetImage('assets/images/play_store_512.png'),
             ),
+            // child: CircleAvatar(
+            //   backgroundImage: profileImageUrl != null
+            //       ? NetworkImage(profileImageUrl!)
+            //       : const AssetImage('assets/images/placeholder.png')
+            //           as ImageProvider,
+            // ),
           ),
         ],
       ),

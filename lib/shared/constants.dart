@@ -6,6 +6,7 @@ import 'package:my_schedule/auth/change_password.dart';
 import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_schedule/screens/FAQ.dart';
 import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -105,32 +106,36 @@ class DrawerClass extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: [
-          DrawerHeader(
+          const DrawerHeader(
             child: Stack(
               alignment: Alignment.center,
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 60,
-                  backgroundImage: profileImageUrl != null
-                      ? NetworkImage(profileImageUrl!)
-                      : const AssetImage('assets/images/placeholder.png')
-                          as ImageProvider,
+                  backgroundImage: AssetImage('assets/images/play_store_512.png')
                 ),
-                Positioned(
-                  right: 80,
-                  bottom: 10,
-                  child: GestureDetector(
-                    onTap: pickAndUploadImage,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: MAROON,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 20),
-                    ),
-                  ),
-                ),
+                // CircleAvatar(
+                //   radius: 60,
+                //   backgroundImage: profileImageUrl != null
+                //       ? NetworkImage(profileImageUrl!)
+                //       : const AssetImage('assets/images/placeholder.png')
+                //           as ImageProvider,
+                // ),
+                // Positioned(
+                //   right: 80,
+                //   bottom: 10,
+                //   child: GestureDetector(
+                //     onTap: pickAndUploadImage,
+                //     child: Container(
+                //       padding: const EdgeInsets.all(4),
+                //       decoration: const BoxDecoration(
+                //         color: MAROON,
+                //         shape: BoxShape.circle,
+                //       ),
+                //       child: const Icon(Icons.add, color: Colors.white, size: 20),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -149,7 +154,9 @@ class DrawerClass extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.help_center_rounded),
             title: const Text('FAQ'),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FAQScreen()));
+            },
           ),
           ListTile(
             leading: const Icon(Icons.logout_outlined),
