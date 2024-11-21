@@ -59,7 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     } catch (e) {
 
-      Alert.of(context).showError("$e");
+      Alert.of(context).showError("Invalid user credentials, please try again 😞😞😞");
+      print("VALIDATE USER ERROR : $e");
       return false;
     }
   }
@@ -126,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
         
                   Text(
-                    "EUCschedule",
+                    "EUCcheduler",
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,

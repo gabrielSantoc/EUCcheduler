@@ -146,11 +146,11 @@ class DrawerClass extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePasswordScreen()));
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('About Developers'),
-            onTap: () {},
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.info),
+          //   title: const Text('About Developers'),
+          //   onTap: () {},
+          // ),
           ListTile(
             leading: const Icon(Icons.help_center_rounded),
             title: const Text('FAQ'),
