@@ -120,28 +120,26 @@ class _LoginScreenState extends State<LoginScreen> {
               color: MAROON,
               height: MediaQuery.of(context).size.height * 0.5, 
 
-              child: const Column(
+              child: Column(
 
                 mainAxisAlignment: MainAxisAlignment.center,
                 
                 children: [
         
-                  Text(
-                    "EUCcheduler",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.19, // 10% of screen height
+                    child: const Image(
+                      image: AssetImage("assets/images/app-logo-png.png"),
+                      fit: BoxFit.contain, // Ensures the image scales proportionally
+
                     ),
                   ),
-        
-                  SizedBox(height: 10),
-                  
-                  Text(
-                    "Login in to Continue!",
+
+                  const Text(
+                    "Welcome Back 🥰",
                     style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
@@ -233,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 18),
                         
                     MyButton(
                       onTap: () async{
@@ -260,14 +258,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         
                     const SizedBox(height: 5),
                         
-                    const Text(
-                      "Your initial password is your birthdate\nin this format YYYY-MM-DD",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                    // const Text(
+                    //   "Your initial password is your birthdate\nin this format YYYY-MM-DD",
+                    //   style: TextStyle(
+                    //     fontSize: 11,
+                    //     color: Colors.black,
+                    //   ),
+                    //   textAlign: TextAlign.center,
+                    // ),
+                    const PasswordGuide()
                     
                   ],
                 ),
