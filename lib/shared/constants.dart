@@ -7,6 +7,7 @@ import 'package:my_schedule/box/boxes.dart';
 import 'package:my_schedule/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_schedule/screens/FAQ.dart';
+import 'package:my_schedule/screens/about_dev_screen.dart';
 import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -146,11 +147,13 @@ class DrawerClass extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePasswordScreen()));
             },
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.info),
-          //   title: const Text('About Developers'),
-          //   onTap: () {},
-          // ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('About Developers'),
+            onTap: () {
+             Navigator.push(context, MaterialPageRoute(builder: (context)=> const AboutDev()));
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.help_center_rounded),
             title: const Text('FAQ'),
