@@ -10,8 +10,8 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   
   await Supabase.initialize(
-    url: "***REMOVED***",
-    anonKey: "***REMOVED***",
+    url: "",
+    anonKey: "",
   );
   await Hive.initFlutter();
 
