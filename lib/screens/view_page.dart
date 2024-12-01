@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_schedule/model/announcement_model.dart';
+import 'package:my_schedule/services/db_service.dart';
 import 'package:my_schedule/shared/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -151,6 +152,8 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
   final SupabaseClient supabase = Supabase.instance.client;
   late Future<List<AnnouncementModel>> announcementFuture;
 
+  final DatabaseService _databaseService = DatabaseService.instance;
+
   @override
   void initState() {
     super.initState();
@@ -160,17 +163,17 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
   Future<List<AnnouncementModel>> fetchAnnouncement() async {
     try {
       final response = await Supabase.instance.client
-          .from('tbl_announcement')
-          .select()
-          .eq('schedule_id', widget.schedId)
-          .order('id',ascending: false);
-
-          
+        .from('tbl_announcement')
+        .select()
+        .eq('schedule_id', widget.schedId)
+        .order('id',ascending: false);
 
       return AnnouncementModel.jsonToList(response);
     } catch (e) {
+
       print('Error fetching announcements: $e');
-      return [];
+      print("SCHED ID :::: ${widget.schedId}");
+      return await _databaseService.fetchAnnouncementsByScheduleId(widget.schedId);
     }
   }
 
@@ -186,8 +189,10 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
                 height: 50,
               ),
               Center(
-                  child: LoadingAnimationWidget.staggeredDotsWave(
-                      color: MAROON, size: 50)),
+                child: LoadingAnimationWidget.staggeredDotsWave(
+                  color: MAROON, size: 50
+                )
+              ),
               const SizedBox(
                 height: 10,
               ),

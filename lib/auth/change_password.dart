@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_schedule/main.dart';
 import 'package:my_schedule/screens/schedule_screen.dart';
-import 'package:my_schedule/screens/student_screen.dart';
 import 'package:my_schedule/shared/alert.dart';
 import 'package:my_schedule/shared/app_dialog.dart';
 import 'package:my_schedule/shared/button.dart';
